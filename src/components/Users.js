@@ -23,11 +23,19 @@ class Users extends Component {
                 isLoaded: true
             }))
             .catch(error => {
-                this.setState({
-                    isLoaded: true,
-                    errorStatusCode: error.response.status,
-                    errorMessage: error.response.statusText
-                });
+                if (!error.response) {
+                    this.setState({
+                        isLoaded: true,
+                        errorStatusCode: 522,
+                        errorMessage: "Connection lost!"
+                    })
+                } else {
+                    this.setState({
+                        isLoaded: true,
+                        errorStatusCode: error.response.status,
+                        errorMessage: error.response.statusText
+                    })
+                }
             });
         }
 
@@ -52,7 +60,7 @@ class Users extends Component {
                             <th>Weight</th>
                             <th>Height</th>
                             <th>Age</th>
-                            <th>Actions</th>
+            {/*<th>Actions</th>*/}
                         </tr>
                         </thead>
                         <tbody>
@@ -61,11 +69,11 @@ class Users extends Component {
                                 <td key={user.uniqueId}>{user.id}</td>
                                 <td key={user.uniqueId}>{user.username}</td>
                                 <td key={user.uniqueId}>{user.email}</td>
-                                <td key={user.uniqueId}>{user.permissions}</td>
+                                <td key={user.uniqueId}><i className={user.permissions === "ROLE_ADMIN" ? "fas fa-crown":"fas fa-user"}></i></td>
                                 <td key={user.uniqueId}>{user.weight}</td>
                                 <td key={user.uniqueId}>{user.height}</td>
                                 <td key={user.uniqueId}>{user.age}</td>
-                                <td key={user.uniqueId}><button>Edit</button></td>
+                                {/*<td key={user.uniqueId}><button>Edit</button></td>*/}
                             </tr>
                         ))}
 

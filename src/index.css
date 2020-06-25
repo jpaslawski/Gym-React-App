@@ -14,10 +14,19 @@ input:-webkit-autofill:active {
 html, body {
     font-family: "Montserrat", sans-serif;
     height: 100%;
+    overflow: auto;
     padding-bottom: 0;
     margin: 0;
     background: #DBF6FF;
     background: linear-gradient(to bottom right, #2399EB, #DBF6FF);
+}
+
+.light-blue {
+    color: #2399EB;
+}
+
+.dark-blue {
+    color: #16017B;
 }
 
 input:focus, textarea:focus, select:focus{
@@ -50,7 +59,7 @@ input:focus, textarea:focus, select:focus{
 }
 
 .side-menu {
-    position: absolute;
+    position: fixed;
     width: 100%;
     background-color: #16017B;
     z-index: 3;
@@ -238,12 +247,69 @@ button:hover {
     background-color: #0F0147;
 }
 
+button:focus {
+    outline:0;
+}
+
+.add-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 40px;
+    border-radius: 25px;
+    padding: 14px 12px;
+    font-size: 20px;
+    font-weight: 100;
+    width: 55px;
+    transition: width 1s ease-in;
+}
+
+.add-btn:hover {
+    border-radius: 25px;
+    overflow: hidden;
+    transition: width 1s ease-in;
+}
+
+.workout .add-btn:hover {
+    width: 180px;
+}
+
+.workout-details .add-btn:hover {
+    width: 300px;
+}
+
+.exercise .add-btn:hover {
+    width: 200px;
+}
+
+.add-btn:before {
+    content: '';
+    opacity: 0;
+    font-size: 15px;
+}
+
+.add-btn:hover:before {
+    border-radius: 25px;
+    opacity: 1;
+}
+
+.workout .add-btn:hover:before {
+    content: 'Add a workout \00a0';
+}
+
+.workout-details .add-btn:hover:before {
+    content: 'Add exercises to workout \00a0';
+}
+
+.exercise button.add-btn:hover:before {
+    content: 'Add an exercise \00a0';
+}
+
 .error-btn {
-    background-color: rgb(233, 15, 15);
+    background: linear-gradient(to top left, #ff3300 0%, #ff6600 100%);
 }
 
 .error-btn:hover {
-    background-color: rgb(139, 3, 3);
+    background: linear-gradient(to bottom right, #ff3300 0%, #ff0000 100%);
 }
 
 .secondary-btn {
@@ -254,12 +320,20 @@ button:hover {
     background-color: rgb(77, 77, 77);
 }
 
+.details-btn {
+    background: linear-gradient(to top left, #00ccff 0%, #0099ff 100%);
+}
+
+.details-btn:hover {
+    background: linear-gradient(to bottom right, #0099ff 0%, #3399ff 100%);
+}
+
 .update-btn {
-    background-color: rgb(0, 158, 8);
+    background: linear-gradient(to top left, #009933 0%, #33cc33 100%);
 }
 
 .update-btn:hover {
-    background-color: rgb(0, 88, 4);
+    background: linear-gradient(to bottom right, #003300 0%, #009933 100%);
 }
 
 table {
@@ -302,8 +376,14 @@ td {
 }
 
 td button {
-    padding: 7px 12px;
-    margin: 2px 5px;
+    padding: 6px 2px;
+    margin-right: 5px;
+    border-radius: 5px;
+    width: 25px;
+}
+
+.action-group {
+    min-width: 150px;
 }
 
 .container {
@@ -586,6 +666,20 @@ input[type=button]:hover {
     margin-left: 5px;
 }
 
+.exercise-details {
+    width: 90%;
+    margin: 10px auto;
+    padding: 20px;
+}
+
+.exercise-details h4 {
+    font-size: 18px;
+}
+
+.exercise-details h5 {
+    font-size: 15px;
+}
+
 .expandable {
     overflow: hidden;
     margin: 10px 0;
@@ -620,6 +714,52 @@ option {
 option:selected {
     background-color: #16017B;
     color: white;
+}
+
+.logs-form {
+    display: flex;
+    background: white;
+    border-radius: 10px;
+    width: 90%;
+    margin: 0px auto;
+}
+
+.logs-form div {
+    padding: 20px 10px;
+}
+
+.logs-form label {
+    font-size: 13px;
+}
+
+.logs-form input {
+    width: 100px;
+    border: none;
+    border-bottom: 2px solid gray;
+    text-align: center;
+    font-size: 18px;
+    font-family: "Montserrat", sans-serif;
+}
+
+.logs-form button {
+    background: linear-gradient(to right, #16017B, #2399EB);
+    font-size: 13px;
+}
+
+.reps-box {
+    flex: 2;
+    margin: auto;
+    text-align: center;
+}
+
+.weight-box {
+    flex: 2;
+    margin: auto;
+    text-align: center;
+}
+
+.submit-box {
+    flex: 1;
 }
 
 @media screen and (min-width: 600px) {
@@ -682,15 +822,14 @@ option:selected {
         padding: 9px 25px;
         font-size: 14px;
     }
-
-    td button {
-        padding: 6px 2px;
-        margin-right: 5px;
-    }
     
-    button > i.fa-pen, i.fa-info {
+    button > i.fa-pen, i.fa-info, i.fa-times {
         font-size: 20px;
     }
+
+    td button {
+        width: 30px;
+    }    
 
     .pageLabel button {
         position: absolute;
@@ -701,6 +840,8 @@ option:selected {
 
     .modal-container {
         margin-left: 40px;
+        width: 50%;
+        max-width: 50%;
     }
 
     .modal-container .fa-times {
@@ -711,6 +852,35 @@ option:selected {
     .card-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
+    }
+
+    .exercise-details {
+        width: 80%;
+        margin: 20px auto;
+    }
+    
+    .exercise-details h4 {
+        font-size: 22px;
+    }
+    
+    .exercise-details h5 {
+        font-size: 18px;
+    }
+
+    .exercise-details th {
+        padding: 10px;
+    }
+
+    .logs-form {
+        width: 80%;
+    }
+
+    .logs-form label {
+        font-size: 15px;
+    }
+
+    .logs-form button {
+        font-size: 16px;
     }
 }
 
@@ -763,6 +933,10 @@ option:selected {
         padding-top: 20px;
     }
 
+    table {
+        width: 70%;
+    }
+
     th {
         padding: 20px 15px;
     }
@@ -770,6 +944,14 @@ option:selected {
     td {
         padding: 10px 10px;
         max-width: 300px;
+    }
+
+    td button {
+        width: 40px;
+    }
+    
+    .info-column {
+        min-width: 500px;
     }
 
     button > i.fas {
@@ -782,11 +964,27 @@ option:selected {
 
     .modal-container {
         margin-left: 150px;
+        width: 40%;
+        max-width: 40%;
     }
 
     .card-container {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .exercise-details {
+        width: 60%;
+        margin: 30px auto;
+        padding: 25px 50px 10px 50px;
+    }
+    
+    .exercise-details h4 {
+        font-size: 25px;
+    }
+    
+    .exercise-details h5 {
+        font-size: 20px;
     }
 
     .modal-option i {
@@ -795,4 +993,115 @@ option:selected {
         top: 2px;
     }
 
+    .table-with-filter {
+        display: flex;
+    }
+
+    .table-content {
+        flex-grow: 1;
+    }
+
+    .table-content > table {
+        width: 90%;
+    }
+
+    .filter {
+        flex-basis: 365px;
+        background-color: white;
+        border-radius: 10px;
+        height: 100%;
+        min-width: 365px;
+    }
+
+    .filter > .filter-title {
+        padding: 17px 20px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        background-color: rgba(233, 233, 233, 0.973);
+        font-weight: 600;
+        font-size: 18px;
+        color: rgb(53, 53, 53);
+    }
+
+    hr {
+        border-top: 1px solid rgba(233, 233, 233, 0.973);
+        width: 100%;
+        margin: 0;
+    }
+
+    .filter-content {
+        padding: 10px 20px;
+        width: 100%;
+    }
+
+    .filter-content > ul {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+
+    .filter-content > ul li {
+        list-style: none;
+        position: relative;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(233, 233, 233, 0.973);
+    }
+
+    .filter-content > ul li:last-child {
+        border-bottom: none;
+    }
+
+    .filter-content > ul li label {
+        font-size: 18px;
+        padding-left: 30px;
+        cursor: pointer;
+    }
+
+    .filter-content > ul li label input {
+        opacity: 0;
+        cursor: pointer;
+
+    }
+
+    .filter-content > ul li label .check {
+        position: absolute;
+        top: 7px;
+        left: 0;
+        width: 25px;
+        height: 25px;
+        background-color: rgba(233, 233, 233, 0.973);
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid rgba(233, 233, 233, 0.973);
+        border-radius: 4px;
+    }
+
+    .filter-content > ul li label .check:before {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        bottom: 3px;
+        right: 3px;
+        background-color: rgba(213, 213, 213, 0.973);
+        border-radius: 2px;
+        transition: 0.5s;
+        transform: translateX(300px);
+    }
+
+    .filter-content > ul li label input:checked ~ .check:before {
+        background: linear-gradient(to top left, #00ccff 0%, #0099ff 100%);
+        box-shadow: 0 0 15px #3399ff ;
+        transform: translateX(0);
+    }
+
+    .filter-btn {
+        padding: 10px 20px;
+        width: 200px !important;
+        margin: auto;
+    }
+
+    .logs-form {
+        width: 60%;
+    }
 }

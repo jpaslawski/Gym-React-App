@@ -30,14 +30,7 @@ class SignIn extends Component {
                     password: this.state.password
                 }
 
-                axios.post("api/create", userData, {
-                    headers: {
-                        'Access-Control-Allow-Credentials': 'true',
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-                        'Content-Type': 'application/json; charset=utf-8'
-                    }
-                })
+                axios.post("api/create", userData)
                 .then(response => history.push("/sign-in"))
                 .catch(error => {
                     this.setState({

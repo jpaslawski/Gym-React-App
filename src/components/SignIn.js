@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { withRouter} from 'react-router-dom';
 
 class SignIn extends Component {
 
@@ -18,8 +19,6 @@ class SignIn extends Component {
     }
 
     signIn() {
-        let { history } = this.props;
-
         if (this.state.email && this.state.password) {
 
             const credentials = {
@@ -30,7 +29,8 @@ class SignIn extends Component {
             axios.post("api/authenticate", credentials)
                 .then(response => {
                     sessionStorage.setItem("token", response.data.token);
-                    history.push("/home");
+                    axios.defaults.headers.common['Authorization'] = "Bearer " + response.data.token;
+                    this.props.history.push("/home");
                 })
                 .catch(error => {
                     this.setState({
@@ -89,4 +89,4 @@ class SignIn extends Component {
     }
 }
 
-export default SignIn;
+export default withRouter(SignIn);

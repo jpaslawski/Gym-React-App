@@ -10,10 +10,12 @@ import Diet from "./components/Diet";
 import Settings from "./components/Settings";
 import Home from "./components/Home";
 import WorkoutDetails from "./components/WorkoutDetails";
+import ExerciseDetails from "./components/ExerciseDetails";
 import Workouts from "./components/Workouts";
 import Header from "./Header";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
+import Error from "./Error";
 import axios from "axios";
 
 
@@ -22,16 +24,6 @@ axios.defaults.baseURL = "https://127.0.0.1:8443/";
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = "http://localhost:8000";
 axios.defaults.headers.common['Authorization'] = "Bearer " + sessionStorage.getItem("token");
 axios.defaults.headers.common['Content-Type'] = "application/json; charset=utf-8";
-console.log("Token " + sessionStorage.getItem("token"));
-axios.interceptors.request.use(request => {
-    console.log("Starting request ", request);
-    return request;
-})
-
-axios.interceptors.response.use(response => {
-    console.log("Starting request ", response);
-    return response;
-})
 
 
 ReactDOM.render(
@@ -44,6 +36,7 @@ ReactDOM.render(
                     <Header />
                     <Route exact path="/users" component={Users} />
                     <Route exact path="/exercises" component={Exercises} />
+                    <Route exact path="/exercises/:exerciseId" component={ExerciseDetails} />
                     <Route exact path="/diet" component={Diet} />
                     <Route exact path="/settings" component={Settings} />
                     <Route exact path="/home" component={Home} />

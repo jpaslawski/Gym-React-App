@@ -44,7 +44,7 @@ class SideMenu extends Component {
                                 <span>Exercises</span>
                             </NavLink>
                         </li>
-                        <li>
+                        {/*<li>
                             <NavLink to="/diet" activeClassName="active">
                                 <span><i className="fas fa-apple-alt"></i></span>
                                 <span>Diet</span>
@@ -55,7 +55,7 @@ class SideMenu extends Component {
                                 <span><i className="fas fa-cog"></i></span>
                                 <span>Settings</span>
                             </NavLink>
-                        </li>
+                        </li>*/}
                         <li>
                             <NavLink to="/sign-in" activeClassName="active" onClick={this.logout}>
                                 <span><i className="fas fa-sign-out-alt"></i></span>
