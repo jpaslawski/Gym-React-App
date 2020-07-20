@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import LineChart from "./ExerciseSessionChart";
 import FullPageLoader from "./FullPageLoader";
 import Error from "../Error";
 
@@ -37,7 +38,7 @@ class ExerciseDetails extends Component {
         const data = {
             exerciseId: this.state.exerciseId,
             weight: parseFloat(this.state.weight),
-            reps: parseInt(this.state. reps, 10)
+            reps: parseInt(this.state.reps, 10)
         }
 
         axios.post("api/logs", data)
@@ -79,8 +80,7 @@ class ExerciseDetails extends Component {
             });
 
         axios.get("api/logs/" + this.state.exerciseId)
-            .then(response =>
-                this.setState({
+            .then(response => this.setState({
                     logs: response.data,
                     isLoaded: true
                 }))
@@ -125,7 +125,7 @@ class ExerciseDetails extends Component {
     }
 
     render() {
-        let { isLoaded, errorStatusCode, exercise } = this.state;
+        let { isLoaded, errorStatusCode, exercise, logs } = this.state;
 
         if (!isLoaded) {
             return <FullPageLoader />;
@@ -133,7 +133,6 @@ class ExerciseDetails extends Component {
             return <Error errorCode={this.state.errorStatusCode} errorInfo={this.state.errorMessage} errorEnd={"Try again later!"} />;
         } else {
             return (
-
                 <div className="main-content">
                     <div className="card exercise-details">
                         <div className="card-info">
@@ -142,6 +141,10 @@ class ExerciseDetails extends Component {
                             <h5>{exercise.info}</h5>
                         </div>
                     </div>
+                    { logs &&      
+                    <div className="chart">
+                        <LineChart logs = { logs } />
+                    </div>}
                     <div className="logs-form">
                         <div className="reps-box">
                             <label>Reps: </label>
@@ -152,7 +155,7 @@ class ExerciseDetails extends Component {
                             <input name="weight" type="number" onChange={this.onChange}></input>
                         </div>
                         <div className="submit-box">
-                            <button onClick={this.addLog}>Add</button>
+                            <button onClick={this.addLog} disabled={this.state.weight && this.state.reps ? "" : "disabled"}>Add</button>
                         </div>
                     </div>
                     {this.state.logs && this.state.logs.map((log) => (

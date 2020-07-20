@@ -15,7 +15,7 @@ import Workouts from "./components/Workouts";
 import Header from "./Header";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
-import Error from "./Error";
+import Meals from "./components/Meals";
 import axios from "axios";
 
 
@@ -34,14 +34,15 @@ ReactDOM.render(
                 <Route exact path="/sign-up" component={SignUp} />
                 <Fragment>
                     <Header />
-                    <Route exact path="/users" component={Users} />
-                    <Route exact path="/exercises" component={Exercises} />
+                    <Route exact path="/administration/users" component={Users} />
+                    <Route exact path={["/dashboard/exercises", "/administration/exercises"]} component={Exercises} />
                     <Route exact path="/exercises/:exerciseId" component={ExerciseDetails} />
-                    <Route exact path="/diet" component={Diet} />
-                    <Route exact path="/settings" component={Settings} />
+                    <Route exact path="/administration/meals" component={Meals} />
+                    <Route exact path="/administration/diet" component={Diet} />
+                    <Route exact path="/administration/settings" component={Settings} />
                     <Route exact path="/home" component={Home} />
                     <Route exact path="/workouts/:workoutId" component={WorkoutDetails} />
-                    <Route exact path="/workouts" component={Workouts} />
+                    <Route path={["/dashboard/workouts", "/administration/workouts"]} component={Workouts} />
                     <Route exact path="/" component={App} />
                 </Fragment>
             </Switch>

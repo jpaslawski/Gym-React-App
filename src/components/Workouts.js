@@ -12,7 +12,10 @@ class Workouts extends Component {
             info: undefined,
             editName: undefined,
             editInfo: undefined,
+            selectedItem: undefined,
             workouts: [],
+            userWorkouts: [],
+            publicWorkouts:[],
             workoutId: undefined,
             isLoaded: false,
             errorStatusCode: undefined,
@@ -27,15 +30,15 @@ class Workouts extends Component {
         this.setUpdateMode = this.setUpdateMode.bind(this);
     }
 
-    redirectToDetails(workoutId) {
-        this.props.history.push("/workouts/" + workoutId);
-        window.location.reload();
-    }
-
     onChange(element) {
         this.setState({
             [element.target.name]: element.target.value
         });
+    }
+
+    redirectToDetails(workoutId) {
+        this.props.history.push("/workouts/" + workoutId);
+        window.location.reload();
     }
 
     setCreateMode() {
@@ -65,36 +68,36 @@ class Workouts extends Component {
                 info: (this.state.info === undefined ? "" : this.state.info)
             }
 
-            if(this.state.createOrUpdate === "create") {
+            if (this.state.createOrUpdate === "create") {
                 axios.post("api/workouts", workoutData)
-                .then(response => {
-                    this.setState({
-                        errorMessage: ""
+                    .then(response => {
+                        this.setState({
+                            errorMessage: ""
+                        })
+                        history.push("/workouts");
+                        window.location.reload();
                     })
-                    history.push("/workouts");
-                    window.location.reload();
-                })
-                .catch(error => {
-                    this.setState({
-                        errorMessage: "Ups! Something went wrong..."
-                    })
-                });
+                    .catch(error => {
+                        this.setState({
+                            errorMessage: "Ups! Something went wrong..."
+                        })
+                    });
             }
-            else if(this.state.createOrUpdate === "update") {
+            else if (this.state.createOrUpdate === "update") {
                 axios.put("api/workouts/" + this.state.workoutId, workoutData)
-                .then(response => {
-                    this.setState({
-                        errorMessage: ""
+                    .then(response => {
+                        this.setState({
+                            errorMessage: ""
+                        })
+                        console.log(response);
+                        history.push("/workouts");
+                        window.location.reload();
                     })
-                    console.log(response);
-                    history.push("/workouts");
-                    window.location.reload();
-                })
-                .catch(error => {
-                    this.setState({
-                        errorMessage: "Ups! Something went wrong..."
-                    })
-                });
+                    .catch(error => {
+                        this.setState({
+                            errorMessage: "Ups! Something went wrong..."
+                        })
+                    });
             }
         } else {
             this.setState({
@@ -127,10 +130,47 @@ class Workouts extends Component {
             });
     }
 
+    setPublicWorkouts() {
+        this.setState({
+            workouts: this.state.publicWorkouts,
+            selectedItem: "public"
+        })
+    }
+
+    setUserWorkouts() {
+        this.setState({
+            workouts: this.state.userWorkouts,
+            selectedItem: "user"
+        })
+    }
+
     componentDidMount() {
         axios.get("api/workouts")
             .then(response => this.setState({
+                userWorkouts: response.data,
+                isLoaded: true
+            }))
+            .catch(error => {
+                if (!error.response) {
+                    this.setState({
+                        isLoaded: true,
+                        errorStatusCode: 522,
+                        errorMessage: "Connection lost!"
+                    })
+                } else {
+                    this.setState({
+                        isLoaded: true,
+                        errorStatusCode: error.response.status,
+                        errorMessage: error.response.statusText
+                    })
+                }
+            });
+
+            axios.get("api/workouts/public")
+            .then(response => this.setState({
+                publicWorkouts: response.data,
                 workouts: response.data,
+                selectedItem: "public",
                 isLoaded: true
             }))
             .catch(error => {
@@ -151,48 +191,60 @@ class Workouts extends Component {
     }
 
     render() {
-        let { isLoaded, name, info, errorStatusCode, editName, editInfo } = this.state;
+        let { workouts, isLoaded, name, info, errorStatusCode, errorMessage, editName, editInfo } = this.state;
+
+        let tableOfWorkouts = <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Info</th>
+                    <th>Exercises Amount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {workouts && workouts.map((workout, index) => (
+                    <tr key={workout.uniqueId}>
+                        <td key={++index}>{workout.name}</td>
+                        <td key={++index}>{workout.info}</td>
+                        <td key={++index}>{workout.exerciseAmount}</td>
+                        <td key={++index} className="action-group">
+                            <button className="details-btn" onClick={this.redirectToDetails.bind(this, workout.id)}><i className="fas fa-info" title="Details"></i></button>
+                            {!workout.public && <a href="#modal">
+                                <button className="update-btn" onClick={this.setUpdateMode.bind(this, workout.name, workout.info, workout.id)}>
+                                    <i className="fas fa-pen" title="Edit"></i>
+                                </button>
+                            </a>}
+                            {!workout.public && <a href="#modal-delete">
+                                <button className="error-btn" onClick={this.selectWorkout.bind(this, workout.id)}>
+                                    <i className="fas fa-times" title="Delete"></i>
+                                </button>
+                            </a>}
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
 
         if (!isLoaded) {
             return <FullPageLoader />;
         } else if (errorStatusCode) {
-            return <Error errorCode={this.state.errorStatusCode} errorInfo={this.state.errorMessage} errorEnd={"Try again later!"} />;
+            return <Error errorCode={errorStatusCode} errorInfo={errorMessage} errorEnd={"Try again later!"} />;
         } else {
             return (
                 <div className="main-content workout">
                     <div className="pageLabel">
                         <h1>Workouts</h1>
+                        <h3 className={this.state.selectedItem === "public" ? "active" : ""} onClick={this.setPublicWorkouts.bind(this)}>All workouts</h3>
+                        <h3 className={this.state.selectedItem === "user" ? "active" : ""} onClick={this.setUserWorkouts.bind(this)}>My workouts</h3>
                     </div>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Info</th>
-                                <th>Exercises Amount</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.workouts.map((workout, index) => (
-                                <tr key={workout.uniqueId}>
-                                    <td key={++index}>{workout.name}</td>
-                                    <td key={++index}>{workout.info}</td>
-                                    <td key={++index}>{workout.exerciseAmount}</td>
-                                    <td key={++index} className="action-group">
-                                        <button className="details-btn" onClick={this.redirectToDetails.bind(this, workout.id)}><i className="fas fa-info" title="Details"></i></button>
-                                        <a href="#modal"><button className="update-btn" onClick={this.setUpdateMode.bind(this, workout.name, workout.info, workout.id)}><i className="fas fa-pen" title="Edit"></i></button></a>
-                                        <a href="#modal-delete"><button className="error-btn" onClick={this.selectWorkout.bind(this, workout.id)}><i className="fas fa-times" title="Delete"></i></button></a>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    {workouts ? tableOfWorkouts : <div className="no-content">No workouts found! Add some using the form down below... </div>}
                     <div className="modal" id="modal">
                         <div className="modal-container">
                             <a href="#">
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>Add a new workout!</h2>
+                            <h2>{this.state.createOrUpdate === "create" ? "Add a new workout!" : "Update the information about this workout!"}</h2>
                             <div className={`inputs email ${(name || editName) ? "focus" : ""}`}>
                                 <div className="i">
                                     <i className="fas fa-list-alt"></i>

@@ -121,9 +121,7 @@ class WorkoutDetails extends Component {
             return (
 
                 <div className="main-content workout-details">
-                    <div className="pageLabel">
-                        <h1>{this.state.workout.name}</h1>
-                    </div>
+                    <h1>{this.state.workout.name}</h1>
                     <div className="card-container">
                         {this.state.exercises && this.state.exercises.map((exercise) => (
                             <div className="card">

@@ -60,18 +60,20 @@ class ExistingExerciseToWorkout extends Component {
             return parseInt(item.id, 10) === parseInt(element.target.value, 10);
         })
 
+        console.log(findExercise[0]);
         this.setState({
-            chosenExercise: findExercise
+            chosenExercise: findExercise[0]
         })
     }
 
     addExercise() {
         let exerciseId = this.state.chosenExercise.id;
+        console.log("Exercise: " + this.state.chosenExercise.id);
         let workoutId = this.props.workoutId;
 
         axios.put("api/exercises/" + exerciseId + "/" + workoutId)
         .then(this.props.history.push("/workouts/" + workoutId))
-        .then(window.location.reload())
+        //.then(window.location.reload())
         .catch(error => {
             this.setState({
                 errorMessage: error.response.statusText

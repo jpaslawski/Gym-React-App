@@ -29,6 +29,18 @@ html, body {
     color: #16017B;
 }
 
+.green {
+    background: #7BDA55;
+}
+
+.red {
+    background: #EE786E;
+}
+
+.yellow {
+    background: #DDDB4C;
+}
+
 input:focus, textarea:focus, select:focus{
     outline: none;
 }
@@ -131,17 +143,48 @@ input:focus, textarea:focus, select:focus{
 
 .main-content h1 {
     font-weight: 100;
-    margin-left: 5px;
     font-size: 20px;
 }
 
 .pageLabel {
     width: 100%;
+    background: white;
+    border-radius: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 0;
+    box-shadow: 0 9px 18px 0 rgba(0,0,0,.1);
 }
 
 .pageLabel h1 {
     display: inline-block;
-    width: 70%;
+    margin: 0;
+    padding: 15px 20px;
+    background: #16017B;
+    color: white;
+    border-radius: 10px 0 0 10px;
+}
+
+.pageLabel h3 {
+    display: inline-block;
+    margin: 0;
+    padding: 19px 5px 12px 10px;
+    border-bottom: 4px solid #FFFFFF;
+    font-size: 15px;
+    font-weight: 100;
+    color: #16017B;
+    transition: all 0.3s ease-in-out;
+}
+
+.pageLabel > .active {
+    border-bottom: 4px solid #0F0147;
+    color: #2399EB;
+}
+
+.pageLabel h3:hover {
+    background: #16017B;
+    color: #2399EB;
+    border-bottom: 4px solid #2399EB;
 }
 
 .pageLabel button {
@@ -149,6 +192,12 @@ input:focus, textarea:focus, select:focus{
     right: 20px;
     margin-top: 10px;
     padding: 7px 20px;
+}
+
+.no-content {
+    text-align: center;
+    margin: 30px auto;
+    font-size: 12px
 }
 
 .none {
@@ -253,6 +302,7 @@ button:focus {
 
 .add-btn {
     position: absolute;
+    z-index: 1;
     bottom: 20px;
     right: 40px;
     border-radius: 25px;
@@ -260,13 +310,13 @@ button:focus {
     font-size: 20px;
     font-weight: 100;
     width: 55px;
-    transition: width 1s ease-in;
+    transition: width .5s ease-in;
 }
 
 .add-btn:hover {
     border-radius: 25px;
     overflow: hidden;
-    transition: width 1s ease-in;
+    transition: width .5s ease-in;
 }
 
 .workout .add-btn:hover {
@@ -279,6 +329,10 @@ button:focus {
 
 .exercise .add-btn:hover {
     width: 200px;
+}
+
+.meal .add-btn:hover {
+    width: 150px;
 }
 
 .add-btn:before {
@@ -302,6 +356,10 @@ button:focus {
 
 .exercise button.add-btn:hover:before {
     content: 'Add an exercise \00a0';
+}
+
+.meal button.add-btn:hover:before {
+    content: 'Add a meal \00a0';
 }
 
 .error-btn {
@@ -343,6 +401,7 @@ table {
     margin-right: auto;
     border-radius: 10px;
     overflow: hidden;
+    box-shadow: 0 9px 18px 0 rgba(0,0,0,.1);
 }
 
 table, td, th {
@@ -380,6 +439,7 @@ td button {
     margin-right: 5px;
     border-radius: 5px;
     width: 25px;
+    box-shadow: 0 9px 18px 0 rgba(0,0,0,.1);
 }
 
 .action-group {
@@ -496,7 +556,8 @@ form h2 {
 }
 
 input[type=text],
-input[type=password] {
+input[type=password],
+input[type=number] {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -526,9 +587,14 @@ input[type=button] {
     background-size: 200%;
 }
 
-input[type=button]:hover {
+input[type=button]:hover:not([disabled]) {
     transition: 0.3s;
     background-position: right;
+}
+
+input[type=button]:disabled {
+    opacity: 0.5;
+    cursor: context-menu;
 }
 
 .fas-project-diagram {
@@ -544,6 +610,7 @@ input[type=button]:hover {
 .modal:before {
     content: "";
     position: fixed;
+    z-index: 10;
     background: rgba(0, 0, 0, .7);
     top: 0;
     left: 0;
@@ -562,8 +629,27 @@ input[type=button]:hover {
     display: block;
 }
 
+.modal-show {
+    content: "";
+    position: fixed;
+    z-index: 10;
+    background: rgba(0, 0, 0, .7);
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: block;
+}
+
+.modal-show .modal-container {
+    -webkit-transform: translate(-50%, 0);
+    -ms-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+}
+
 .modal-container {
     position: fixed;
+    z-index: 11;
     background-color: white;
     border-radius: 15px;
     top: 100px;
@@ -633,6 +719,46 @@ input[type=button]:hover {
     padding: 25px;
     margin: 5px;
     position: relative;
+    box-shadow: 0 9px 18px 0 rgba(0,0,0,.1);;
+}
+
+.home .card {
+    padding: 0;
+    margin: 5px;
+    height: 100px;
+}
+
+.card .image {
+    position: absolute;
+    width: 20%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 9px 0 0 9px;
+    text-align: center;
+}
+
+.card .general {
+    position: absolute;
+    left: 20%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 0 9px 9px 0;
+    padding: 20px 15px;
+}
+
+.card .general h3 {
+    margin: 5px 0;
+}
+
+.card .general h4 {
+    color: rgb(110, 110, 110);
+    text-transform: none;
+}
+
+.card .image i {
+    font-size: 30px;
+    color: white;
+    margin: 35px 0;
 }
 
 .card-info {
@@ -732,8 +858,9 @@ option:selected {
     font-size: 13px;
 }
 
-.logs-form input {
-    width: 100px;
+.logs-form input[type=number] {
+    position: relative;
+    width: 50px;
     border: none;
     border-bottom: 2px solid gray;
     text-align: center;
@@ -743,7 +870,21 @@ option:selected {
 
 .logs-form button {
     background: linear-gradient(to right, #16017B, #2399EB);
-    font-size: 13px;
+    padding: 10px 15px;
+    font-size: 15px;
+    margin: auto;
+    transition: .5s ease-out;
+    opacity: 1;
+}
+
+.logs-form button:hover:not([disabled]) {
+    background:  linear-gradient(to right, #2399EB, #16017B);
+    background-position: 83px;
+}
+
+.logs-form button:disabled {
+    opacity: 0.5;
+    cursor: context-menu;
 }
 
 .reps-box {
@@ -760,6 +901,18 @@ option:selected {
 
 .submit-box {
     flex: 1;
+}
+
+.chart {
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    width: 90%;
+    margin: 10px auto;
+}
+
+canvas {
+    width: 100%;
 }
 
 @media screen and (min-width: 600px) {
@@ -800,11 +953,19 @@ option:selected {
 
     .main-content h1 {
         font-size: 30px;
-        margin-left: 5px;
     }
 
     .error h1 {
         font-size: 200px;
+    }
+
+    .no-content {
+        margin: 30px auto;
+        font-size: 16px
+    }
+
+    table {
+        width: 100%;
     }
 
     th {
@@ -829,7 +990,25 @@ option:selected {
 
     td button {
         width: 30px;
-    }    
+    }
+
+    .pageLabel {
+        margin-top: 0;
+    }
+    
+    .pageLabel h3 {
+        padding: 28px 10px 14px 15px;
+        border-bottom: 5px solid #FFFFFF;
+        font-size: 17px;
+    }
+
+    .pageLabel > .active {
+        border-bottom: 5px solid #0F0147;
+    }
+    
+    .pageLabel h3:hover {
+        border-bottom: 5px solid #2399EB;
+    }
 
     .pageLabel button {
         position: absolute;
@@ -879,8 +1058,22 @@ option:selected {
         font-size: 15px;
     }
 
+    .logs-form input[type=number] {
+        width: 70px;
+        font-size: 16px;
+    }
+
     .logs-form button {
         font-size: 16px;
+        padding: 10px 20px;
+    }
+
+    .logs-form div {
+        padding: 15px 5px;
+    }
+
+    .chart {
+        width: 80%;
     }
 }
 
@@ -931,6 +1124,20 @@ option:selected {
     .main-content {
         margin-left: 300px;
         padding-top: 20px;
+    }
+    
+    .pageLabel h1 {
+        padding: 15px 20px;
+    }
+    
+    .pageLabel h3 {
+        font-size: 19px;
+        padding: 26px 15px 13px 20px;
+    }
+
+    .no-content {
+        margin: 50px auto;
+        font-size: 18px
     }
 
     table {
@@ -1011,6 +1218,7 @@ option:selected {
         border-radius: 10px;
         height: 100%;
         min-width: 365px;
+        box-shadow: 0 9px 18px 0 rgba(0,0,0,.1);;
     }
 
     .filter > .filter-title {
@@ -1102,6 +1310,22 @@ option:selected {
     }
 
     .logs-form {
+        width: 60%;
+    }
+
+    .logs-form label {
+        font-size: 15px;
+    }
+
+    .logs-form input[type=number] {
+        width: 100px;
+    }
+
+    .logs-form button {
+        font-size: 17px;
+    }
+
+    .chart {
         width: 60%;
     }
 }

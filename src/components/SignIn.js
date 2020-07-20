@@ -29,13 +29,20 @@ class SignIn extends Component {
             axios.post("api/authenticate", credentials)
                 .then(response => {
                     sessionStorage.setItem("token", response.data.token);
+                    sessionStorage.setItem("role", response.data.role);
                     axios.defaults.headers.common['Authorization'] = "Bearer " + response.data.token;
                     this.props.history.push("/home");
                 })
                 .catch(error => {
-                    this.setState({
-                        errorMessage: "Wrong email or password!"
-                    })
+                    if (!error.response) {
+                        this.setState({
+                            errorMessage: "Network Error!"
+                        });
+                    } else {
+                        this.setState({
+                            errorMessage: "Wrong email or password!"
+                        });
+                    }
                 });
         } else {
             this.setState({

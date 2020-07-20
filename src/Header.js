@@ -1,5 +1,6 @@
 import React, { Component } from "react";
-import SideMenu from "./SideMenu";
+import AdministrationSideMenu from "./AdministrationSideMenu";
+import UserSideMenu from "./UserSideMenu";
 
 class Header extends Component {
 
@@ -29,7 +30,8 @@ class Header extends Component {
                     <h3>Gym App</h3>
                 </div>
                 <div id="side_menu" >
-                    <SideMenu />
+                    {sessionStorage.getItem('role') && sessionStorage.getItem('role') === "ROLE_ADMIN" && <AdministrationSideMenu /> }
+                    {sessionStorage.getItem('role') && sessionStorage.getItem('role') === "ROLE_USER" && <UserSideMenu /> }
                 </div>
             </div>
         );

@@ -57,6 +57,11 @@ class Exercises extends Component {
         })
     }
 
+    redirectToDetails(exerciseId) {
+        this.props.history.push("/exercises/" + exerciseId);
+        window.location.reload();
+    }
+
     componentDidMount() {
         axios.get("api/exercises")
             .then(response => this.setState({
@@ -137,7 +142,7 @@ class Exercises extends Component {
                                             {this.extractCategory(exercise.exerciseCategory)}
                                         </td>
                                         <td key={exercise.uniqueId}>
-                                            <button className="details-btn" ><i className="fas fa-info" title="Details"></i></button>
+                                            <button className="details-btn" onClick={this.redirectToDetails.bind(this, exercise.id)}><i className="fas fa-info" title="Details"></i></button>
                                         </td>
                                     </tr>
                                 ))}
