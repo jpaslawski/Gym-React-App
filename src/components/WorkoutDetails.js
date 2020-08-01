@@ -124,7 +124,7 @@ class WorkoutDetails extends Component {
                     <h1>{this.state.workout.name}</h1>
                     <div className="card-container">
                         {this.state.exercises && this.state.exercises.map((exercise) => (
-                            <div className="card">
+                            <div className="card" key={exercise.id}>
                                 <div className="card-info">
                                     <h4 className="category">{this.extractCategory(exercise.exerciseCategory)}</h4>
                                     <h4>{exercise.name}</h4>
@@ -139,7 +139,7 @@ class WorkoutDetails extends Component {
                     </div>
                     <div className="modal" id="modal">
                         <div className="modal-container">
-                            <a href="#">
+                            <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
                             <h2>Choose one option:</h2>

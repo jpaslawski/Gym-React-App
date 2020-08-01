@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import './animations.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { Route, BrowserRouter as Router, Switch} from "react-router-dom";
@@ -16,6 +17,7 @@ import Header from "./Header";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Meals from "./components/Meals";
+import Profile from "./components/Profile";
 import axios from "axios";
 
 
@@ -40,6 +42,7 @@ ReactDOM.render(
                     <Route exact path="/administration/meals" component={Meals} />
                     <Route exact path="/administration/diet" component={Diet} />
                     <Route exact path="/administration/settings" component={Settings} />
+                    <Route exact path="/dashboard/profile" component={Profile} />
                     <Route exact path="/home" component={Home} />
                     <Route exact path="/workouts/:workoutId" component={WorkoutDetails} />
                     <Route path={["/dashboard/workouts", "/administration/workouts"]} component={Workouts} />

@@ -135,7 +135,7 @@ class Exercises extends Component {
                             </thead>
                             <tbody>
                                 {this.state.displayedExercises && this.state.displayedExercises.map((exercise) => (
-                                    <tr key={exercise.uniqueId}>
+                                    <tr key={exercise.id}>
                                         <td key={exercise.uniqueId}>{exercise.name}</td>
                                         <td key={exercise.uniqueId} className="info-column">{exercise.info}</td>
                                         <td key={exercise.uniqueId}>
@@ -154,10 +154,10 @@ class Exercises extends Component {
                             <div className="filter-content">
                                 <h4>Category:</h4>
                                 <ul>
-                                {this.state.categories && this.state.categories.map((item) => (
-                                    <li>
+                                {this.state.categories && this.state.categories.map((item, index) => (
+                                    <li key={index++}>
                                         <label>{item.category}
-                                        <input id={item.id} name={item.category} type="checkbox" onChange={this.onChangeCheckBox}/>
+                                        <input id={item.id} name={item.category} type="checkbox" onChange={this.onChangeCheckBox} checked={this.state.checkedCategories.includes(item.category)}/>
                                         <span className="check"></span>
                                         </label>
                                     </li>
@@ -168,14 +168,37 @@ class Exercises extends Component {
                         <a href="#modal">
                             <button className="add-btn"><i className="fas fa-plus"></i></button>
                         </a>
+                        <a href="#filter">
+                            <button className="filter-btn">Filter</button>
+                        </a>
                     </div>
                     <div className="modal" id="modal">
                         <div className="modal-container">
-                            <a href="#">
+                            <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
                             <h2>New Exercise</h2>
                             <NewExerciseToWorkout />
+                        </div>
+                    </div>
+                    <div className="modal" id="filter">
+                        <div className="modal-container">
+                            <a href="# ">
+                                <i className=" fas fa-times"></i>
+                            </a>
+                            <div className="filter-content">
+                                <h4>Category:</h4>
+                                <ul>
+                                {this.state.categories && this.state.categories.map((item, index) => (
+                                    <li key={index++}>
+                                        <label>{item.category}
+                                        <input id={item.id} name={item.category} type="checkbox" onChange={this.onChangeCheckBox} checked={this.state.checkedCategories.includes(item.category)}/>
+                                        <span className="check"></span>
+                                        </label>
+                                    </li>
+                                ))}
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>

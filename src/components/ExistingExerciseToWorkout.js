@@ -127,8 +127,8 @@ class ExistingExerciseToWorkout extends Component {
                             <h5>Category</h5>
                             <select name="categoryEx" onChange={this.onChangeCategory}>
                                 <option value="null">-</option>
-                                {this.state.categories && this.state.categories.map((item) => (
-                                    <option>{item.category}</option>
+                                {this.state.categories && this.state.categories.map((item, index) => (
+                                    <option key={index++}>{item.category}</option>
                                 ))}
                             </select>
                         </div>
@@ -150,8 +150,8 @@ class ExistingExerciseToWorkout extends Component {
                         <h5>No available exercises in this category</h5>
                     </div>
                     <p className="error-message ">{this.state.errorMessage}</p>
-                    <input type={(exercisesByCategory === undefined || exercisesByCategory.length === 0) ? "" : "button"} 
-                    className={(exercisesByCategory === undefined || exercisesByCategory.length === 0) ? "none" : "btn"} value="Add" onClick={this.addExercise} />
+                    { !(exercisesByCategory === undefined || exercisesByCategory.length === 0) && <input type="button"
+                    className={(exercisesByCategory === undefined || exercisesByCategory.length === 0) ? "none" : "btn"} value="Add" onClick={this.addExercise} /> }
                 </div>
             );
         }

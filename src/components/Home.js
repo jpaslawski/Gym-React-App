@@ -3,6 +3,7 @@ import { Redirect } from "react-router-dom";
 import FullPageLoader from "./FullPageLoader";
 import axios from "axios";
 import Error from "../Error";
+import ProgressBar from "./ProgressBar";
 
 class Home extends Component {
 
@@ -10,7 +11,7 @@ class Home extends Component {
         super(props);
         this.state = {
             weightResponse: {},
-            lastExercise: {},
+            userDailyInfo: [],
             weightLog: undefined,
             weightLogSubmitted: false,
             showModal: false,
@@ -68,19 +69,16 @@ class Home extends Component {
             axios.get("api/users/checkWeight")
                 .then(response => this.setState({
                     weightLogSubmitted: response.data,
-                    showModal: !response.data,
-                    isLoaded: true
+                    showModal: !response.data
                 }))
                 .catch(error => {
                     if (!error.response) {
                         this.setState({
-                            isLoaded: true,
                             errorStatusCode: 522,
                             errorMessage: "Connection lost!"
                         })
                     } else {
                         this.setState({
-                            isLoaded: true,
                             errorStatusCode: error.response.status,
                             errorMessage: error.response.statusText
                         })
@@ -88,51 +86,28 @@ class Home extends Component {
                 });
         }
 
-        axios.get("api/users/currentWeight")
-            .then(response => this.setState({
-                weightResponse: response.data,
-                isLoaded: true
-            }))
-            .catch(error => {
-                if (!error.response) {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: 522,
-                        errorMessage: "Connection lost!"
-                    })
-                } else {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: error.response.status,
-                        errorMessage: error.response.statusText
-                    })
-                }
-            });
-
-        axios.get("api/exercises/last")
-            .then(response => this.setState({
-                lastExercise: response.data,
-                isLoaded: true
-            }))
-            .catch(error => {
-                if (!error.response) {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: 522,
-                        errorMessage: "Connection lost!"
-                    })
-                } else {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: error.response.status,
-                        errorMessage: error.response.statusText
-                    })
-                }
-            });
+        axios.get("api/users/details/dailyInfo")
+        .then(response => this.setState({
+            userDailyInfo: response.data,
+            isLoaded: true
+        }))
+        .catch(error => {
+            if (!error.response) {
+                this.setState({
+                    errorStatusCode: 522,
+                    errorMessage: "Connection lost!"
+                })
+            } else {
+                this.setState({
+                    errorStatusCode: error.response.status,
+                    errorMessage: error.response.statusText
+                })
+            }
+        });
     }
 
     render() {
-        let { weightResponse, lastExercise, showModal, isLoaded, errorStatusCode, errorMessage } = this.state;
+        let { userDailyInfo, showModal, isLoaded, errorStatusCode, errorMessage } = this.state;
 
         if (this.state.redirect) {
             return (<Redirect to='sign-in' />);
@@ -140,65 +115,70 @@ class Home extends Component {
             return <FullPageLoader />;
         } else if (errorStatusCode) {
             return <Error errorCode={errorStatusCode} errorInfo={errorMessage} errorEnd={"Try again later!"} />;
+        } else {
+            return (
+                <div className="main-content home">
+                    <h1>Home</h1>
+                    <div className="card-container align-items">
+                        <div className="card">
+                            <div className="card-info">
+                                <div className="image green">
+                                    <i className="fas fa-weight"></i>
+                                </div>
+                                <div className="general">
+                                    <h3>{userDailyInfo.currentWeight} kg</h3>
+                                    <h4>Current Weight</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="card">
+                            <div className="card-info">
+                                <div className="image yellow">
+                                    <i className="fas fa-burn"></i>
+                                </div>
+                                <div className="general">
+                                    <h3>{userDailyInfo.currentCalorieBalance} kcal</h3>
+                                    <h4>Daily Balance of Calories</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="wrapper">
+                            <h3>Macronutrients Daily Goal</h3>
+                            <div className="progress-container">
+                                <label>Protein</label>
+                                <ProgressBar percentage={userDailyInfo.proteinPercentage} background="0" />
+                                <label>Carbs</label>
+                                <ProgressBar percentage={userDailyInfo.carbsPercentage} background="1" />
+                                <label>Fat</label>
+                                <ProgressBar percentage={userDailyInfo.fatPercentage} background="2" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className={showModal ? "modal-show" : ""} >
+                        <div className="modal-container home">
+                            <a href="/#" onClick={this.handleModal}>
+                                <i className=" fas fa-times"></i>
+                            </a>
+                            <h2>Daily weight check</h2>
+                            <div className="logs-form" style={{ boxShadow: "none" }}>
+                                <div className={`inputs email ${this.state.weightLog ? "focus" : ""}`}>
+                                    <div className="i">
+                                        <i className="fas fa-weight"></i>
+                                    </div>
+                                    <div>
+                                        <h5>Weight</h5>
+                                        <input type="number" name="weightLog" onChange={this.onChange} />
+                                    </div>
+                                </div>
+                                <div className="submit-box">
+                                    <button onClick={this.addLog} disabled={this.state.weightLog ? "" : "disabled"}>Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
         }
-
-        return (
-            <div className="main-content home">
-                <h1>Home</h1>
-                <div className="card-container">
-                    <div className="card">
-                        <div className="card-info">
-                            <div className="image green">
-                                <i className="fas fa-weight"></i>
-                            </div>
-                            <div className="general">
-                                <h3>{weightResponse.currentWeight}</h3>
-                                <h4>Current Weight</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="card">
-                        <div className="card-info">
-                            <div className="image red">
-                                <i className="fas fa-dumbbell"></i>
-                            </div>
-                            <div className="general">
-                                <h3>{lastExercise.name}</h3>
-                                <h4>Last Exercise</h4>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="card">
-                        <div className="card-info">
-                            <div className="image yellow">
-                                <i class="fas fa-burn"></i>
-                            </div>
-                            <div className="general">
-                                <h3>2500 kcal</h3>
-                                <h4>Calories</h4>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className={showModal ? "modal-show" : ""} >
-                    <div className="modal-container">
-                        <a href="#" onClick={this.handleModal}>
-                            <i className=" fas fa-times"></i>
-                        </a>
-                        <h2>Daily weight check</h2>
-                        <div className="logs-form">
-                            <div className="weight-box">
-                                <label>Weight: </label>
-                                <input name="weightLog" type="number" onChange={this.onChange}></input>
-                            </div>
-                            <div className="submit-box">
-                                <button onClick={this.addLog} disabled={this.state.weightLog ? "" : "disabled"}>Update</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
     }
 }
 

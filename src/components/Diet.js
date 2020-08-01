@@ -1,12 +1,255 @@
-import React, {Component} from "react";
+import React, { Component } from "react";
+import FullPageLoader from "./FullPageLoader";
+import axios from "axios";
+import Error from "../Error";
+import transformDate from "../Helpers";
 
 class Diet extends Component {
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            mealName: "",
+            meals: [],
+            mealsToDisplay: [],
+            mealLogsSet: [],
+            currentLogsSet: {},
+            currentIndex: undefined,
+            mealToAdd: {},
+            portionCount: 1,
+            itemCount: 6,
+            isLoaded: false,
+            errorStatusCode: undefined,
+            errorMessage: undefined
+        };
+
+        this.onChange = this.onChange.bind(this);
+        this.addMealLog = this.addMealLog.bind(this);
+        this.incLogSetIndex = this.incLogSetIndex.bind(this);
+        this.decLogSetIndex = this.decLogSetIndex.bind(this);
+        this.incItemLimit = this.incItemLimit.bind(this);
+    }
+
+    onChange(element) {
+        let newArray = [];
+        if(element.target.name === "mealName" && element.target.value !== "") {
+            newArray = this.state.meals.filter(meal => {
+                return meal.name.toLowerCase().includes(element.target.value.toLowerCase())
+            })
+        } else if (element.target.name === "mealName" && element.target.value === "") {
+            newArray = this.state.meals;
+        }
+
+        this.setState({
+            [element.target.name]: element.target.value,
+            mealsToDisplay: newArray
+        });
+    }
+
+    setMeal(index) {
+        this.setState({
+            mealToAdd: this.state.meals[index]
+        })
+    }
+
+    incLogSetIndex() {
+        let index = this.state.currentIndex;
+
+        if (this.state.currentIndex + 1 < this.state.mealLogsSet.length) index++;
+        else index = 0;
+
+        this.setState({
+            currentIndex: index,
+            currentLogsSet: this.state.mealLogsSet[index]
+        })
+    }
+
+    decLogSetIndex() {
+        let index = this.state.currentIndex;
+
+        if (this.state.currentIndex - 1 >= 0) index--;
+        else index = this.state.mealLogsSet.length - 1;
+
+        this.setState({
+            currentIndex: index,
+            currentLogsSet: this.state.mealLogsSet[index]
+        })
+    }
+
+    incItemLimit() {
+        this.setState({
+            itemCount: this.state.itemCount + 6
+        })
+    }
+
+    addMealLog() {
+        let { history } = this.props;
+
+        const data = {
+            mealId: this.state.mealToAdd.id,
+            portionCount: this.state.portionCount
+        }
+
+        axios.post("api/mealLog", data)
+            .then(response => {
+                this.setState({
+                    errorMessage: ""
+                })
+                history.push("diet");
+                window.location.reload();
+            })
+            .catch(error => {
+                this.setState({
+                    errorMessage: "Ups! Something went wrong..."
+                })
+            });
+    }
+    
+
+    componentDidMount() {
+        axios.get("api/meals")
+            .then(response => this.setState({
+                meals: response.data,
+                mealsToDisplay: response.data,
+                isLoaded: true
+            }))
+            .catch(error => {
+                if (!error.response) {
+                    this.setState({
+                        isLoaded: true,
+                        errorStatusCode: 522,
+                        errorMessage: "Connection lost!"
+                    })
+                } else {
+                    this.setState({
+                        isLoaded: true,
+                        errorStatusCode: error.response.status,
+                        errorMessage: error.response.statusText
+                    })
+                }
+            });
+
+        axios.get("api/mealLog/all")
+            .then(response => this.setState({
+                mealLogsSet: response.data,
+                currentLogsSet: response.data[0],
+                currentIndex: 0,
+                isLoaded: true
+            }))
+            .catch(error => {
+                if (!error.response) {
+                    this.setState({
+                        isLoaded: true,
+                        errorStatusCode: 522,
+                        errorMessage: "Connection lost!"
+                    })
+                } else {
+                    this.setState({
+                        isLoaded: true,
+                        errorStatusCode: error.response.status,
+                        errorMessage: error.response.statusText
+                    })
+                }
+            });
+    }
+
     render() {
-        return (
-            <div className="main-content">
-                <h1>Diet</h1>
-            </div>
-        );
+        let { mealsToDisplay, currentLogsSet, itemCount, isLoaded, errorStatusCode, errorMessage } = this.state;
+
+        let tableOfLogs = <table className="diet">
+            <thead>
+                <tr>
+                    <th className="light-blue" colSpan="1"><button className="handleLogSet" onClick={this.decLogSetIndex} style={{"float":"right"}}><i className="fas fa-arrow-left"></i></button></th>
+                    <th className="light-blue" colSpan="3">{transformDate(currentLogsSet.date)}</th>
+                    <th className="light-blue" colSpan="1"><button className="handleLogSet" onClick={this.incLogSetIndex}style={{"float":"left"}}><i className="fas fa-arrow-right"></i></button></th>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>Calories</th>
+                    <th>Protein</th>
+                    <th>Carbs</th>
+                    <th>Fat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {currentLogsSet.mealLogs && currentLogsSet.mealLogs.map((log, index, i) => (
+                    <tr key={log.id}>
+                        <td key={++index}>{log.referredMeal.name}</td>
+                        <td key={++index}>{(log.referredMeal.calories * log.portionCount).toFixed(2)} kcal</td>
+                        <td key={++index}>{(log.referredMeal.protein * log.portionCount).toFixed(2)} g</td>
+                        <td key={++index}>{(log.referredMeal.carbs * log.portionCount).toFixed(2)} g</td>
+                        <td key={++index}>{(log.referredMeal.fat * log.portionCount).toFixed(2)} g</td>
+                    </tr>))}
+                <tr className="summary-row">
+                    <td>Sum</td>
+                    <td>{parseFloat(currentLogsSet.caloriesSum).toFixed(2)} kcal</td>
+                    <td>{parseFloat(currentLogsSet.proteinSum).toFixed(2)} g</td>
+                    <td>{parseFloat(currentLogsSet.carbsSum).toFixed(2)} g</td>
+                    <td>{parseFloat(currentLogsSet.fatSum).toFixed(2)} g</td>
+                </tr>
+            </tbody>
+        </table>
+
+        if (!isLoaded) {
+            return <FullPageLoader />;
+        } else if (errorStatusCode) {
+            return <Error errorCode={errorStatusCode} errorInfo={errorMessage} errorEnd={"Try again later!"} />;
+        } else {
+            return (
+                <div className="main-content">
+                    <div className="pageLabel">
+                        <h1>Diet</h1>
+                        <input name="mealName" placeholder="Find your meal..." onChange={this.onChange} />
+                    </div>
+                    <section>
+                        <h3>Choose the meal you want to include in your daily diet:</h3>
+                        <div className="meal-container">
+                            {mealsToDisplay && mealsToDisplay.map((meal, index) => (
+                                index < itemCount &&
+                                <div className="meal-card" key={meal.id}>
+                                    <h6 >{meal.name}</h6>
+                                    <a href="#modal"><button onClick={this.setMeal.bind(this, index)}>
+                                        <i className="fas fa-plus"></i>
+                                    </button></a>
+                                </div>
+                            ))}
+                        </div>
+                        {itemCount < mealsToDisplay.length && <div id="show-more">
+                            <button onClick={this.incItemLimit}>Show more</button>
+                            </div> }
+                    </section>
+                    {currentLogsSet ? tableOfLogs : <div className="no-content">No meals found!</div>}
+                    <div className="modal" id="modal">
+                        <div className="modal-container">
+                            <a href="# ">
+                                <i className=" fas fa-times"></i>
+                            </a>
+                            <h2>Adding {this.state.mealToAdd.name} to your daily balance</h2>
+                            <div className="macro-summary">
+                                <div className="macro-name">Calories:</div>
+                                <div className="macro-value">{(this.state.mealToAdd.calories * this.state.portionCount).toFixed(2)} kcal</div>
+                                <div className="macro-name">Protein:</div>
+                                <div className="macro-value">{(this.state.mealToAdd.protein * this.state.portionCount).toFixed(2)} g</div>
+                                <div className="macro-name">Carbs:</div>
+                                <div className="macro-value">{(this.state.mealToAdd.carbs * this.state.portionCount).toFixed(2)} g</div>
+                                <div className="macro-name">Fat:</div>
+                                <div className="macro-value">{(this.state.mealToAdd.fat * this.state.portionCount).toFixed(2)} g</div>
+                                <div className="macro-name" style={{ marginTop: "4px" }}>Portion:</div>
+                                <div className="macro-portion">
+                                    <div className="macro-value">{this.state.mealToAdd.portionWeight} g x</div>
+                                    <input type="number" name="portionCount" min="0.5" step="0.5" value={this.state.portionCount} onChange={this.onChange} />
+                                </div>
+                            </div>
+                            <p className="error-message ">{this.state.errorMessage}</p>
+                            <input type="button" value="Submit" onClick={this.addMealLog} disabled={this.portionCount > 0} />
+                            <a href="# ">
+                                <button className="secondary-btn">Cancel</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
     }
 }
 

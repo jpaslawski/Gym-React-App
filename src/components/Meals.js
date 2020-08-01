@@ -78,7 +78,7 @@ class Meals extends Component {
                     this.setState({
                         errorMessage: ""
                     })
-                    history.push("/meals");
+                    history.push("meals");
                     window.location.reload();
                 })
                 .catch(error => {
@@ -93,7 +93,7 @@ class Meals extends Component {
                     this.setState({
                         errorMessage: ""
                     })
-                    history.push("/meals");
+                    history.push("meals");
                     window.location.reload();
                 })
                 .catch(error => {
@@ -118,7 +118,7 @@ class Meals extends Component {
                 this.setState({
                     errorMessage: ""
                 })
-                history.push("/meals");
+                history.push("meals");
                 window.location.reload();
             })
             .catch(error => {
@@ -178,7 +178,7 @@ class Meals extends Component {
                         </thead>
                         <tbody>
                             {this.state.meals && this.state.meals.map((meal, index) => (
-                                <tr key={meal.uniqueId}>
+                                <tr key={meal.id}>
                                     <td key={++index}>{meal.name}</td>
                                     <td key={++index}>{meal.calories} kcal</td>
                                     <td key={++index}>{meal.protein} g</td>
@@ -203,7 +203,7 @@ class Meals extends Component {
                     </table>
                     <div className="modal" id="modal">
                         <div className="modal-container">
-                            <a href="#">
+                            <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
                             <h2>{this.state.createOrUpdate === "create" ? "Add a new meal!" : "Update the information about this meal!"}</h2>
@@ -213,7 +213,7 @@ class Meals extends Component {
                                 </div>
                                 <div>
                                     <h5>Meal Name</h5>
-                                    <input type="text" name="name" value={name} onChange={this.onChange} />
+                                    <input type="text" name="name" value={name || ""} onChange={this.onChange} />
                                 </div>
                             </div>
                             <div className={`inputs email ${calories ? "focus" : ""}`}>
@@ -222,7 +222,7 @@ class Meals extends Component {
                                 </div>
                                 <div>
                                     <h5>Calories [kcal]</h5>
-                                    <input type="number" name="calories" value={calories} onChange={this.onChange} />
+                                    <input type="number" name="calories" value={calories || ""} onChange={this.onChange} />
                                 </div>
                             </div>
                             <div className={`inputs email ${protein ? "focus" : ""}`}>
@@ -231,7 +231,7 @@ class Meals extends Component {
                                 </div>
                                 <div>
                                     <h5>Protein [g]</h5>
-                                    <input type="number" name="protein" value={protein} onChange={this.onChange} />
+                                    <input type="number" name="protein" value={protein || ""} onChange={this.onChange} />
                                 </div>
                             </div>
                             <div className={`inputs email ${carbs ? "focus" : ""}`}>
@@ -240,7 +240,7 @@ class Meals extends Component {
                                 </div>
                                 <div>
                                     <h5>Carbs [g]</h5>
-                                    <input type="number" name="carbs" value={carbs} onChange={this.onChange} />
+                                    <input type="number" name="carbs" value={carbs || ""} onChange={this.onChange} />
                                 </div>
                             </div>
                             <div className={`inputs email ${fat ? "focus" : ""}`}>
@@ -249,7 +249,7 @@ class Meals extends Component {
                                 </div>
                                 <div>
                                     <h5>Fat [g]</h5>
-                                    <input type="number" name="fat" value={fat} onChange={this.onChange} />
+                                    <input type="number" name="fat" value={fat || ""} onChange={this.onChange} />
                                 </div>
                             </div>
                             <div className={`inputs email ${portionWeight ? "focus" : ""}`}>
@@ -258,7 +258,7 @@ class Meals extends Component {
                                 </div>
                                 <div>
                                     <h5>Portion Weight [g]</h5>
-                                    <input type="number" name="portionWeight" value={portionWeight} onChange={this.onChange} />
+                                    <input type="number" name="portionWeight" value={portionWeight || ""} onChange={this.onChange} />
                                 </div>
                             </div>
                             <p className="error-message ">{this.state.errorMessage}</p>
@@ -268,13 +268,13 @@ class Meals extends Component {
                     </div>
                     <div className="modal" id="modal-delete">
                         <div className="modal-container">
-                            <a href="#">
+                            <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
                             <h2>Delete {this.state.selectedMeal.name}?</h2>
                             <p className="error-message ">{this.state.errorMessage}</p>
                             <input type="button" className="btn" value="Delete" onClick={this.deleteMeal} />
-                            <a href="#"><input type="button" className="secondary-btn" value="Cancel" /></a>
+                            <a href="# "><input type="button" className="secondary-btn" value="Cancel" /></a>
                         </div>
                     </div>
                     <a href="#modal">

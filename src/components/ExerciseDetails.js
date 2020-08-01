@@ -3,9 +3,7 @@ import axios from "axios";
 import LineChart from "./ExerciseSessionChart";
 import FullPageLoader from "./FullPageLoader";
 import Error from "../Error";
-
-const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+import transformDate from "../Helpers";
 
 class ExerciseDetails extends Component {
 
@@ -18,20 +16,27 @@ class ExerciseDetails extends Component {
             logs: undefined,
             reps: undefined,
             weight: undefined,
+            itemCount: 2,
             isLoaded: false,
             errorStatusCode: undefined,
             errorMessage: undefined
         };
 
-        this.transformDate = this.transformDate.bind(this);
         this.onChange = this.onChange.bind(this);
         this.addLog = this.addLog.bind(this);
+        this.incItemLimit = this.incItemLimit.bind(this);
     }
 
     onChange(element) {
         this.setState({
             [element.target.name]: element.target.value
         });
+    }
+
+    incItemLimit() {
+        this.setState({
+            itemCount: this.state.itemCount + 2
+        })
     }
 
     addLog() {
@@ -109,23 +114,8 @@ class ExerciseDetails extends Component {
         return JSON.parse(json).category;
     }
 
-    transformDate(theDate) {
-        let newDateFormat;
-        let date = new Date(theDate);
-
-        let dayOfWeek = dayNames[date.getDay() - 1];
-        let day = date.getUTCDate();
-
-        let month = monthNames[date.getMonth()];
-        let year = date.getUTCFullYear();
-        
-        newDateFormat = dayOfWeek + ", " + day + " " + month + " " + year;
-
-        return newDateFormat;
-    }
-
     render() {
-        let { isLoaded, errorStatusCode, exercise, logs } = this.state;
+        let { exercise, logs, itemCount, isLoaded, errorStatusCode } = this.state;
 
         if (!isLoaded) {
             return <FullPageLoader />;
@@ -145,38 +135,55 @@ class ExerciseDetails extends Component {
                     <div className="chart">
                         <LineChart logs = { logs } />
                     </div>}
-                    <div className="logs-form">
-                        <div className="reps-box">
-                            <label>Reps: </label>
-                            <input name="reps" type="number" onChange={this.onChange}></input>
-                        </div>
-                        <div className="weight-box">
-                            <label>Weight: </label>
-                            <input name="weight" type="number" onChange={this.onChange}></input>
-                        </div>
+                    <div id="#details" className="logs-form exercise">
+                            <div className={`inputs email ${this.state.reps ? "focus" : ""}`}>
+                                <div className="i">
+                                    <i className="fas fa-sort-numeric-up-alt"></i>
+                                </div>
+                                <div>
+                                    <h5>Reps</h5>
+                                    <input type="number" name="reps" onChange={this.onChange} />
+                                </div>
+                            </div>
+                            <div className={`inputs email ${this.state.weight ? "focus" : ""}`}>
+                                <div className="i">
+                                    <i className="fas fa-weight"></i>
+                                </div>
+                                <div>
+                                    <h5>Weight</h5>
+                                    <input type="number" name="weight" onChange={this.onChange} />
+                                </div>
+                            </div>
                         <div className="submit-box">
                             <button onClick={this.addLog} disabled={this.state.weight && this.state.reps ? "" : "disabled"}>Add</button>
                         </div>
                     </div>
-                    {this.state.logs && this.state.logs.map((log) => (
-                        <table className="exercise-details">
-                            <tr>
-                                <th className="light-blue" colspan="3">{this.transformDate(log.date)}</th>
-                            </tr>
-                            <tr>
-                                <th>#</th>
-                                <th>Reps</th>
-                                <th>Weight</th>
-                            </tr>
+                    {logs && logs.map((log, index) => (
+                        index < itemCount && <table className="exercise-details">
+                            <thead>
+                                <tr key={index++}>
+                                    <th className="light-blue" colSpan="3">{transformDate(log.date)}</th>
+                                </tr>
+                                <tr key={index++}>
+                                    <th>#</th>
+                                    <th>Reps</th>
+                                    <th>Weight</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                             {log.exerciseLogSet.map((element, i) => (
-                                <tr>
-                                    <td>{i+1}</td>
+                                <tr key={index + i + 1}>
+                                    <td>{index + i + 1}</td>
                                     <td>{element.reps}</td>
                                     <td>{element.weight}</td>
                                 </tr>
                             ))}
+                            </tbody>
                         </table>
                     ))}
+                    {logs && itemCount < logs.length && <div id="show-more">
+                        <button onClick={this.incItemLimit}>Show more</button>
+                    </div> }
                 </div>
 
             );

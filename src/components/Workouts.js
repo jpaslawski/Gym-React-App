@@ -89,7 +89,6 @@ class Workouts extends Component {
                         this.setState({
                             errorMessage: ""
                         })
-                        console.log(response);
                         history.push("/workouts");
                         window.location.reload();
                     })
@@ -204,7 +203,7 @@ class Workouts extends Component {
             </thead>
             <tbody>
                 {workouts && workouts.map((workout, index) => (
-                    <tr key={workout.uniqueId}>
+                    <tr key={workout.id}>
                         <td key={++index}>{workout.name}</td>
                         <td key={++index}>{workout.info}</td>
                         <td key={++index}>{workout.exerciseAmount}</td>
@@ -241,7 +240,7 @@ class Workouts extends Component {
                     {workouts ? tableOfWorkouts : <div className="no-content">No workouts found! Add some using the form down below... </div>}
                     <div className="modal" id="modal">
                         <div className="modal-container">
-                            <a href="#">
+                            <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
                             <h2>{this.state.createOrUpdate === "create" ? "Add a new workout!" : "Update the information about this workout!"}</h2>
@@ -269,13 +268,13 @@ class Workouts extends Component {
                     </div>
                     <div className="modal" id="modal-delete">
                         <div className="modal-container">
-                            <a href="#">
+                            <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
                             <h2>Delete workout {this.state.workoutId}?</h2>
                             <p className="error-message ">{this.state.errorMessage}</p>
                             <input type="button" className="btn" value="Delete" onClick={this.deleteWorkout} />
-                            <a href="#"><input type="button" className="btn secondary-btn" value="Cancel" /></a>
+                            <a href="# "><input type="button" className="btn secondary-btn" value="Cancel" /></a>
                         </div>
                     </div>
                     <a href="#modal">

@@ -118,8 +118,8 @@ class NewExerciseToWorkout extends Component {
                             <h5>Category</h5>
                             <select name="categoryNew" onChange={this.onChange}>
                                 <option value="null">-</option>
-                                {this.state.categories && this.state.categories.map((item) => (
-                                    <option>{item.category}</option>
+                                {this.state.categories && this.state.categories.map((item, index) => (
+                                    <option key={index++}>{item.category}</option>
                                 ))}
                             </select>
                         </div>

@@ -46,7 +46,7 @@ class AdministrationSideMenu extends Component {
                         </li>
                         <li>
                             <NavLink to="/administration/diet" activeClassName="active">
-                                <span><i class="fas fa-newspaper"></i></span>
+                                <span><i className="fas fa-newspaper"></i></span>
                                 <span>Diet</span>
                             </NavLink>
                         </li>
