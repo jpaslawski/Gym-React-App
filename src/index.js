@@ -39,8 +39,8 @@ ReactDOM.render(
                     <Route exact path="/administration/users" component={Users} />
                     <Route exact path={["/dashboard/exercises", "/administration/exercises"]} component={Exercises} />
                     <Route exact path="/exercises/:exerciseId" component={ExerciseDetails} />
-                    <Route exact path="/administration/meals" component={Meals} />
-                    <Route exact path="/administration/diet" component={Diet} />
+                    <Route path={["/dashboard/meals", "/administration/meals"]} component={Meals} />
+                    <Route path={["/dashboard/diet", "/administration/diet"]} component={Diet} />
                     <Route exact path="/administration/settings" component={Settings} />
                     <Route exact path="/dashboard/profile" component={Profile} />
                     <Route exact path="/home" component={Home} />

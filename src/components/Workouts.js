@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import FullPageLoader from "./FullPageLoader";
+import FullPageLoader from "../animatedComponents/FullPageLoader";
 import axios from "axios";
 import Error from "../Error";
 
@@ -8,15 +8,16 @@ class Workouts extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: undefined,
-            info: undefined,
-            editName: undefined,
-            editInfo: undefined,
+            name: "",
+            info: "",
+            editName: "",
+            editInfo: "",
             selectedItem: undefined,
             workouts: [],
             userWorkouts: [],
             publicWorkouts:[],
             workoutId: undefined,
+            customHeight: undefined,
             isLoaded: false,
             errorStatusCode: undefined,
             errorMessage: undefined,
@@ -74,7 +75,7 @@ class Workouts extends Component {
                         this.setState({
                             errorMessage: ""
                         })
-                        history.push("/workouts");
+                        history.push("workouts");
                         window.location.reload();
                     })
                     .catch(error => {
@@ -89,7 +90,7 @@ class Workouts extends Component {
                         this.setState({
                             errorMessage: ""
                         })
-                        history.push("/workouts");
+                        history.push("workouts");
                         window.location.reload();
                     })
                     .catch(error => {
@@ -119,7 +120,7 @@ class Workouts extends Component {
                 this.setState({
                     errorMessage: ""
                 })
-                history.push("/workouts");
+                history.push("workouts");
                 window.location.reload();
             })
             .catch(error => {
@@ -143,11 +144,25 @@ class Workouts extends Component {
         })
     }
 
+    changeTextarea = (element) => {
+        this.setState({
+            [element.target.name]: element.target.value,
+            customHeight: this.multilineTextarea.scrollHeight
+        });
+        this.multilineTextarea.style.height = 'auto';
+        this.multilineTextarea.style.height = this.multilineTextarea.scrollHeight + 'px';
+    }
+
     componentDidMount() {
+
+        if (this.multilineTextarea) {
+            this.multilineTextarea.style.height = 'auto';
+          }
+
         axios.get("api/workouts")
             .then(response => this.setState({
-                userWorkouts: response.data,
-                isLoaded: true
+                isLoaded: true,
+                userWorkouts: response.data
             }))
             .catch(error => {
                 if (!error.response) {
@@ -166,12 +181,15 @@ class Workouts extends Component {
             });
 
             axios.get("api/workouts/public")
-            .then(response => this.setState({
+            .then(response => {
+                console.log(response.data);
+                this.setState({
                 publicWorkouts: response.data,
                 workouts: response.data,
                 selectedItem: "public",
                 isLoaded: true
-            }))
+            })
+        })
             .catch(error => {
                 if (!error.response) {
                     this.setState({
@@ -191,14 +209,15 @@ class Workouts extends Component {
 
     render() {
         let { workouts, isLoaded, name, info, errorStatusCode, errorMessage, editName, editInfo } = this.state;
+        let language = sessionStorage.getItem("language");
 
         let tableOfWorkouts = <table>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Info</th>
-                    <th>Exercises Amount</th>
-                    <th>Actions</th>
+                    <th>{language === "EN" ? "Name" : "Nazwa"}</th>
+                    <th>{language === "EN" ? "Info" : "Dodatkowe informacje"}</th>
+                    <th>{language === "EN" ? "Exercise Amount" : "Liczba ćwiczeń"}</th>
+                    <th>{language === "EN" ? "Actions" : "Działania"}</th>
                 </tr>
             </thead>
             <tbody>
@@ -208,15 +227,15 @@ class Workouts extends Component {
                         <td key={++index}>{workout.info}</td>
                         <td key={++index}>{workout.exerciseAmount}</td>
                         <td key={++index} className="action-group">
-                            <button className="details-btn" onClick={this.redirectToDetails.bind(this, workout.id)}><i className="fas fa-info" title="Details"></i></button>
-                            {!workout.public && <a href="#modal">
+                            <button className="details-btn" onClick={this.redirectToDetails.bind(this, workout.id)}><i className="fas fa-info" title={language === "EN" ? "Details" : "Szczegóły"}></i></button>
+                            {sessionStorage.getItem('role') === "ROLE_ADMIN" && <a href="#modal">
                                 <button className="update-btn" onClick={this.setUpdateMode.bind(this, workout.name, workout.info, workout.id)}>
-                                    <i className="fas fa-pen" title="Edit"></i>
+                                    <i className="fas fa-pen" title={language === "EN" ? "Edit" : "Aktualizuj"}></i>
                                 </button>
                             </a>}
-                            {!workout.public && <a href="#modal-delete">
+                            {sessionStorage.getItem('role') === "ROLE_ADMIN" && <a href="#modal-delete">
                                 <button className="error-btn" onClick={this.selectWorkout.bind(this, workout.id)}>
-                                    <i className="fas fa-times" title="Delete"></i>
+                                    <i className="fas fa-times" title={language === "EN" ? "Delete" : "Usuń"}></i>
                                 </button>
                             </a>}
                         </td>
@@ -233,11 +252,13 @@ class Workouts extends Component {
             return (
                 <div className="main-content workout">
                     <div className="pageLabel">
-                        <h1>Workouts</h1>
-                        <h3 className={this.state.selectedItem === "public" ? "active" : ""} onClick={this.setPublicWorkouts.bind(this)}>All workouts</h3>
-                        <h3 className={this.state.selectedItem === "user" ? "active" : ""} onClick={this.setUserWorkouts.bind(this)}>My workouts</h3>
+                        <h1>{language === "EN" ? "Workouts" : "Treningi"}</h1>
+                        <h3 className={this.state.selectedItem === "public" ? "active" : ""} onClick={this.setPublicWorkouts.bind(this)}>{language === "EN" ? "Shared workouts" : "Treningi udostępnione"}</h3>
+                        <h3 className={this.state.selectedItem === "user" ? "active" : ""} onClick={this.setUserWorkouts.bind(this)}>{language === "EN" ? "My workouts" : "Moje treningi"}</h3>
                     </div>
-                    {workouts ? tableOfWorkouts : <div className="no-content">No workouts found! Add some using the form down below... </div>}
+                    {workouts ? tableOfWorkouts : <div className="no-content">
+                        {language === "EN" ? "No workouts found! Add some by clicking the button down below..." : "Nie znaleziono żadnych treningów! Możesz dodać trening za pomocą poniższego przycisku..."}
+                        </div>}
                     <div className="modal" id="modal">
                         <div className="modal-container">
                             <a href="# ">
@@ -249,21 +270,21 @@ class Workouts extends Component {
                                     <i className="fas fa-list-alt"></i>
                                 </div>
                                 <div>
-                                    <h5>Workout Name</h5>
+                                    <h5>{language === "EN" ? "Workout Name" : "Nazwa treningu"}</h5>
                                     <input type="text" name="name" value={name} onChange={this.onChange} />
                                 </div>
                             </div>
-                            <div className={`inputs email ${(info || editInfo) ? "focus" : ""}`}>
+                            <div className={`inputs email ${(info || editInfo) ? "focus" : ""}`} style={{"height": `${this.state.customHeight}px`}}>
                                 <div className="i">
                                     <i className="fas fa-info"></i>
                                 </div>
                                 <div>
-                                    <h5>Additional Info</h5>
-                                    <input type="text" name="info" value={info} onChange={this.onChange} />
+                                    <h5>{language === "EN" ? "Additional Info" : "Dodatkowe informacje"}</h5>
+                                    <textarea type="text" name="info" value={info} onChange={this.changeTextarea} ref={ref => this.multilineTextarea = ref} />
                                 </div>
                             </div>
                             <p className="error-message ">{this.state.errorMessage}</p>
-                            <input type="button" className="btn" value="Submit" onClick={this.createOrUpdateWorkout} />
+                            <input type="button" value={language === "EN" ? "Submit" : "Zapisz"} onClick={this.createOrUpdateWorkout} />
                         </div>
                     </div>
                     <div className="modal" id="modal-delete">
@@ -271,10 +292,10 @@ class Workouts extends Component {
                             <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>Delete workout {this.state.workoutId}?</h2>
+                            <h2>{language === "EN" ? "Are you sure that you want to delete workout" : "Czy napewno chcesz usunąć trening"} {this.state.workoutId}?</h2>
                             <p className="error-message ">{this.state.errorMessage}</p>
-                            <input type="button" className="btn" value="Delete" onClick={this.deleteWorkout} />
-                            <a href="# "><input type="button" className="btn secondary-btn" value="Cancel" /></a>
+                            <input type="button" className="btn" value={language === "EN" ? "Delete" : "Usuń"} onClick={this.deleteWorkout} />
+                            <a href="# "><input type="button" className="btn secondary-btn" value={language === "EN" ? "Cancel" : "Anuluj"} /></a>
                         </div>
                     </div>
                     <a href="#modal">

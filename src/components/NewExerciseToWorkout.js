@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import FullPageLoader from "./FullPageLoader";
+import FullPageLoader from "../animatedComponents/FullPageLoader";
 import {withRouter} from "react-router-dom";
 
 class NewExerciseToWorkout extends Component {
@@ -13,6 +13,8 @@ class NewExerciseToWorkout extends Component {
             categoryNew: undefined,
             errorMessage: undefined,
             categories: [],
+            createOrUpdate: undefined,
+            customHeight: undefined,
             isLoaded: false
         };
 
@@ -34,7 +36,7 @@ class NewExerciseToWorkout extends Component {
         }
         if (this.props.workoutId) {
             axios.post("api/exercises/" + this.props.workoutId, exerciseData)
-            .then(this.props.history.push("/workouts/" + this.props.workoutId))
+            .then(this.props.history.push("workouts/" + this.props.workoutId))
             .then(window.location.reload())
             .catch(error => {
                 this.setState({
@@ -44,7 +46,7 @@ class NewExerciseToWorkout extends Component {
             });
         } else {
             axios.post("api/exercises", exerciseData)
-            .then(this.props.history.push("/exercises"))
+            .then(this.props.history.push("exercises"))
             .then(window.location.reload())
             .catch(error => {
                 this.setState({
@@ -53,6 +55,15 @@ class NewExerciseToWorkout extends Component {
                 console.log(error.response.data);
             });
         }
+    }
+
+    changeTextarea = (element) => {
+        this.setState({
+            [element.target.name]: element.target.value,
+            customHeight: this.multilineTextarea.scrollHeight
+        });
+        this.multilineTextarea.style.height = 'auto';
+        this.multilineTextarea.style.height = this.multilineTextarea.scrollHeight + 'px';
     }
 
     componentDidMount() {
@@ -87,6 +98,8 @@ class NewExerciseToWorkout extends Component {
 
     render() {
         let { name, info, isLoaded } = this.state;
+        let language = sessionStorage.getItem("language");
+
         if (!isLoaded) {
             return (<FullPageLoader />);
         } else {
@@ -97,17 +110,17 @@ class NewExerciseToWorkout extends Component {
                             <i className="fas fa-dumbbell"></i>
                         </div>
                         <div>
-                            <h5>Exercise Name</h5>
+                            <h5>{language === "EN" ? "Exercise Name" : "Nazwa ćwiczenia"}</h5>
                             <input type="text" name="name" onChange={this.onChange} />
                         </div>
                     </div>
-                    <div className={`inputs email ${info ? "focus" : ""}`}>
+                    <div className={`inputs email ${(info) ? "focus" : ""}`} style={{"height": `${this.state.customHeight}px`}}>
                         <div className="i">
                             <i className="fas fa-info"></i>
                         </div>
                         <div>
-                            <h5>Additional Info</h5>
-                            <input type="text" name="info" onChange={this.onChange} />
+                            <h5>{language === "EN" ? "Additional Info" : "Dodatkowe informacje"}</h5>
+                            <textarea type="text" name="info" value={info} onChange={this.changeTextarea} ref={ref => this.multilineTextarea = ref} />
                         </div>
                     </div>
                     <div className="inputs email focus">
@@ -115,7 +128,7 @@ class NewExerciseToWorkout extends Component {
                             <i className="fas fa-project-diagram"></i>
                         </div>
                         <div>
-                            <h5>Category</h5>
+                            <h5>{language === "EN" ? "Category" : "Kategoria"}</h5>
                             <select name="categoryNew" onChange={this.onChange}>
                                 <option value="null">-</option>
                                 {this.state.categories && this.state.categories.map((item, index) => (
@@ -125,7 +138,7 @@ class NewExerciseToWorkout extends Component {
                         </div>
                     </div>
                     <p className="error-message ">{this.state.errorMessage}</p>
-                    <input type="button" className="btn" value="Create & Add" onClick={this.createExercise} />
+                    <input type="button" className="btn" value={language === "EN" ? "Create & Add" : "Utwórz & Dodaj"} onClick={this.createExercise} />
                 </div>
             );
         }

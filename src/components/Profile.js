@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import FullPageLoader from "./FullPageLoader";
+import FullPageLoader from "../animatedComponents/FullPageLoader";
 import axios from "axios";
 import Error from "../Error";
 import ProfileImage from '../assets/profile.jpg';
-import WeightChart from "./WeightChart";
+import WeightChart from "../charts/WeightChart";
 import Slider from '@material-ui/core/Slider';
 
 class Profile extends Component {
@@ -128,7 +128,7 @@ class Profile extends Component {
             dateOfBirth: this.handleDateFormat(this.state.day, this.state.month, this.state.year),
             height: this.state.height,
             weight: this.state.weight,
-            gender: this.state.gender,
+            gender: this.state.gender === "Undefined" ? "Male" : this.state.gender,
             exerciseLevel: this.state.exerciseLevel
         }
 
@@ -156,8 +156,6 @@ class Profile extends Component {
             calorieDiff: this.state.calorieDiff * this.state.dietGoal,
             totalCalories: this.state.dietDetails.totalCalories
         }
-
-        console.log(data);
 
         axios.post("api/users/diet", data)
             .then(response => {
@@ -244,6 +242,7 @@ class Profile extends Component {
 
         const days = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        let language = sessionStorage.getItem("language");
         let years = [];
         let currentYear = new Date().getFullYear();
         for (let year = currentYear; year > currentYear - 100; year--) {
@@ -266,43 +265,43 @@ class Profile extends Component {
                             <h4>{user.email}</h4>
                         </div>
                         <div className="profile-details">
-                            <div className="section-label">User Details</div>
+                            <div className="section-label">{language === "EN" ? "User Details" : "Szczegóły informacje"}</div>
                             <div className="user-info">
-                                <div className="item-label">Date of Birth:</div>
+                                <div className="item-label">{language === "EN" ? "Date of Birth" : "Data urodzenia"}:</div>
                                 <div className="item-content">{user.dateOfBirth}</div>
 
-                                <div className="item-label">Height:</div>
+                                <div className="item-label">{language === "EN" ? "Height" : "Wzrost"}:</div>
                                 <div className="item-content">{user.height} cm</div>
 
-                                <div className="item-label">Weight:</div>
+                                <div className="item-label">{language === "EN" ? "Weight" : "Waga"}:</div>
                                 <div className="item-content">{user.weight} kg</div>
 
-                                <div className="item-label">Gender:</div>
+                                <div className="item-label">{language === "EN" ? "Gender" : "Płeć"}:</div>
                                 <div className="item-content">{user.gender}</div>
 
-                                <div className="item-label">Exercise Level Ratio:</div>
+                                <div className="item-label">{language === "EN" ? "Exercise Level Ratio" : "Współczynnik wysiłku fizycznego"}:</div>
                                 <div className="item-content">{user.exerciseLevel}</div>
                             </div>
                             <div className="center-content"><a href="#modal-profile">
-                                <button onClick={this.openModalProfile}>Update your profile</button>
+                                <button onClick={this.openModalProfile}>{language === "EN" ? "Update your profile" : "Zaktualizuj profil"}</button>
                             </a>
                             </div>
-                            <div className="section-label">Diet Details</div>
+                            <div className="section-label">{language === "EN" ? "Diet Details" : "Szczegóły Diety"}</div>
                             <div className="user-info">
-                                <div className="item-label">Protein Percentage:</div>
+                                <div className="item-label">{language === "EN" ? "Protein Percentage" : "Procent Białka"}:</div>
                                 <div className="item-content">{dietDetails.proteinPercentage} %</div>
 
-                                <div className="item-label">Carbs Percentage:</div>
+                                <div className="item-label">{language === "EN" ? "Carbs Percentage" : "Procent Węglowodanów"}:</div>
                                 <div className="item-content">{dietDetails.carbsPercentage} %</div>
 
-                                <div className="item-label">Fat Percentage:</div>
+                                <div className="item-label">{language === "EN" ? "Fat Percentage" : "Procent Tłuszczy"}:</div>
                                 <div className="item-content">{dietDetails.fatPercentage} %</div>
 
-                                <div className="item-label">Total Calories:</div>
+                                <div className="item-label">{language === "EN" ? "Total Calories" : "Całkowita ilość kalorii"}:</div>
                                 <div className="item-content">{dietDetails.totalCalories + dietDetails.calorieDiff}</div>
                             </div>
                             <div className="center-content"><a href="#modal-diet">
-                                <button>Change your diet</button>
+                                <button>{language === "EN" ? "Change your diet" : "Zmień dietę"}</button>
                             </a>
                             </div>
                         </div>
@@ -316,14 +315,14 @@ class Profile extends Component {
                             <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>Update you profile</h2>
+                            <h2>{language === "EN" ? "Update you profile" : "Zaktualizuj profil"}</h2>
                             <form>
                                 <div className={`inputs email ${username ? "focus" : ""}`}>
                                     <div className="i">
                                         <i className="fas fa-user"></i>
                                     </div>
                                     <div>
-                                        <h5>Username</h5>
+                                        <h5>{language === "EN" ? "Username" : "Nazwa użytkownika"}</h5>
                                         <input type="text" name="username" onChange={this.onChange} value={username || ""} />
                                     </div>
                                 </div>
@@ -333,7 +332,7 @@ class Profile extends Component {
                                     </div>
                                     <div className="input-group">
                                         <div className="day">
-                                            <h5>Day</h5>
+                                            <h5>{language === "EN" ? "Day" : "Dzień"}</h5>
                                             <select name="day" onChange={this.onChange} value={day}>
                                                 {days.map(day => (
                                                     <option key={day} value={day}>{day}</option>
@@ -341,7 +340,7 @@ class Profile extends Component {
                                             </select>
                                         </div>
                                         <div className="month">
-                                            <h5>Month</h5>
+                                            <h5>{language === "EN" ? "Month" : "Miesiąc"}</h5>
                                             <select name="month" onChange={this.onChange} value={month}>
                                                 {months.map((m, index) => (
                                                     <option key={m} value={index + 1}>{m}</option>
@@ -349,7 +348,7 @@ class Profile extends Component {
                                             </select>
                                         </div>
                                         <div className="year">
-                                            <h5>Year</h5>
+                                            <h5>{language === "EN" ? "Year" : "Rok"}</h5>
                                             <select name="year" onChange={this.onChange} value={year}>
                                                 {years.map(y => (
                                                     <option key={y} value={y}>{y}</option>
@@ -364,7 +363,7 @@ class Profile extends Component {
                                         <i className="fas fa-weight"></i>
                                     </div>
                                     <div>
-                                        <h5>Weight</h5>
+                                        <h5>{language === "EN" ? "Weight" : "Waga"}</h5>
                                         <input type="number" name="weight" onChange={this.onChange} value={weight || ""} />
                                     </div>
                                 </div>
@@ -373,7 +372,7 @@ class Profile extends Component {
                                         <i className="fas fa-arrows-alt-v"></i>
                                     </div>
                                     <div>
-                                        <h5>Height</h5>
+                                        <h5>{language === "EN" ? "Height" : "Wzrost"}</h5>
                                         <input type="number" name="height" onChange={this.onChange} value={height || ""} />
                                     </div>
                                 </div>
@@ -382,7 +381,7 @@ class Profile extends Component {
                                         <i className="fas fa-venus-mars"></i>
                                     </div>
                                     <div>
-                                        <h5>Gender</h5>
+                                        <h5>{language === "EN" ? "Gender" : "Płeć"}</h5>
                                         <select name="gender" onChange={this.onChange} value={gender === "Undefined" ? "Male" : gender}>
                                             <option>Male</option>
                                             <option>Female</option>
@@ -394,18 +393,18 @@ class Profile extends Component {
                                         <i className="fas fa-signal"></i>
                                     </div>
                                     <div>
-                                        <h5>Exercise Level</h5>
+                                        <h5>{language === "EN" ? "Exercise Level" : "Poziom wysiłku fizycznego"}</h5>
                                         <select name="exerciseLevel" onChange={this.onChange} value={exerciseLevel}>
-                                            <option value="1.2">Little to no exercise</option>
-                                            <option value="1.375">Light exercise (1 - 3 days per week)</option>
-                                            <option value="1.55">Moderate exercise (3 - 5 days per week)</option>
-                                            <option value="1.725">Heavy exercise (6 - 7 days per week)</option>
-                                            <option value="1.9">Very heavy exercise (twice per day)</option>
+                                            <option value="1.2">{language === "EN" ? "Little to no exercise" : "Mały wysiłek lub jego brak"}</option>
+                                            <option value="1.375">{language === "EN" ? "Light exercise (1 - 3 days per week)" : "Lekki trening (1 - 3 dni w tygodniu)"}</option>
+                                            <option value="1.55">{language === "EN" ? "Moderate exercise (3 - 5 days per week)" : "Umiarkowany trening (3 - 5 dni w tygodniu)"}</option>
+                                            <option value="1.725">{language === "EN" ? "Heavy exercise (6 - 7 days per week)" : "Ciężki trening (6 - 7 dni w tygodniu)"}</option>
+                                            <option value="1.9">{language === "EN" ? "Very heavy exercise (twice per day)" : "Bardzo ciężki trening (2 razy dziennie)"}</option>
                                         </select>
                                     </div>
                                 </div>
                                 <p className="error-message ">{this.state.errorMessage}</p>
-                                <input type="button" className="btn" value="Update" disabled={!(username && weight > 0 && height > 0)} onClick={this.updateUser} />
+                                <input type="button" className="btn" value={language === "EN" ? "Update" : "Zaktualizuj"} disabled={!(username && weight > 0 && height > 0)} onClick={this.updateUser} />
                             </form>
                         </div>
                     </div>
@@ -414,16 +413,16 @@ class Profile extends Component {
                             <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>Change your diet parameters</h2>
+                            <h2>{language === "EN" ? "Change your diet parameters" : "Zmień parametry diety"}</h2>
                             <div className="slider-container">
-                                <label>Protein Percentage</label>
+                                <label>{language === "EN" ? "Protein Percentage" : "Procent Białka"}</label>
                                     <Slider
                                         className="protein"
                                         value={proteinSlider}
                                         track={false}
                                         valueLabelDisplay="on"
                                         onChange={this.handleSliderChange("proteinSlider")} />
-                                <label>Carbs Percentage</label>
+                                <label>{language === "EN" ? "Carbs Percentage" : "Procent Węglowodanów"}</label>
                                     <Slider
                                         className="carbs"
                                         value={carbsSlider}
@@ -431,7 +430,7 @@ class Profile extends Component {
                                         aria-labelledby="carbsSlider"
                                         valueLabelDisplay="on"
                                         onChange={this.handleSliderChange("carbsSlider")} />
-                                <label>Fat Percentage</label>
+                                <label>{language === "EN" ? "Fat Percentage" : "Procent Tłuszczy"}</label>
                                     <Slider
                                     className="fat"
                                     value={fatSlider}
@@ -445,11 +444,11 @@ class Profile extends Component {
                                     <i className="fas fa-bullseye"></i>
                                 </div>
                                 <div>
-                                    <h5>Diet goal</h5>
+                                    <h5>{language === "EN" ? "Diet goal" : "Cel Diety"}</h5>
                                     <select name="dietGoal" onChange={this.onChange} value={dietGoal}>
-                                        <option value="-1">Lose Weight</option>
-                                        <option value="0">Keep current Weight</option>
-                                        <option value="1">Gain Weight</option>
+                                        <option value="-1">{language === "EN" ? "Lose Weight" : "Utrata wagi"}</option>
+                                        <option value="0">{language === "EN" ? "Keep current Weight" : "Utrzymanie aktualnej wagi"}</option>
+                                        <option value="1">{language === "EN" ? "Gain Weight" : "Przybranie wagi"}</option>
                                     </select>
                                 </div>
                             </div>
@@ -459,12 +458,12 @@ class Profile extends Component {
                                     <i className="fas fa-weight"></i>
                                 </div>
                                 <div>
-                                    <h5>Calorie { dietGoal < 0 ? "Deficit" : "Surplus"}</h5>
+                                    <h5>{ dietGoal < 0 ? `${language === "EN" ? "Calorie Deficit" : "Deficyt Kaloryczny"}` : `${language === "EN" ? "Calorie Surplus" : "Nadwyżka Kaloryczna"}`}</h5>
                                     <input type="number" name="calorieDiff" onChange={this.onChange} value={ Math.abs(calorieDiff) } />
                                 </div>
                             </div>}
                             <p className="error-message ">{this.state.errorMessage}</p>
-                                <input type="button" className="btn" value="Update" onClick={this.updateUserDiet} />
+                                <input type="button" className="btn" value={language === "EN" ? "Update" : "Zaktualizuj"} onClick={this.updateUserDiet} />
                         </div>
                     </div>
                 </div>

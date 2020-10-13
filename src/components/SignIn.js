@@ -18,6 +18,10 @@ class SignIn extends Component {
         this.onChange = this.onChange.bind(this);
     }
 
+    componentDidMount() {
+        sessionStorage.setItem("language", "PL");
+    }
+
     signIn() {
         if (this.state.email && this.state.password) {
 
@@ -29,7 +33,10 @@ class SignIn extends Component {
             axios.post("api/authenticate", credentials)
                 .then(response => {
                     sessionStorage.setItem("token", response.data.token);
-                    sessionStorage.setItem("role", response.data.role);
+                    let jwtData = response.data.token.split('.')[1];
+                    let decodedJwtJsonData = window.atob(jwtData);
+                    let decodedJwtData = JSON.parse(decodedJwtJsonData);
+                    sessionStorage.setItem("role", decodedJwtData.permissions);
                     axios.defaults.headers.common['Authorization'] = "Bearer " + response.data.token;
                     this.props.history.push("/home");
                 })
@@ -61,11 +68,12 @@ class SignIn extends Component {
     render() {
 
         let { email, password, errorMessage } = this.state;
+        let language = sessionStorage.getItem("language");
 
         return (
             <div className="sign-in">
                 <div className="sign-in-container">
-                    <h1>Welcome!</h1>
+                    <h1>{language === "EN" ? "Welcome!" : "Witaj!"}</h1>
                     <form>
                         <div className={`inputs email ${email ? "focus" : ""}`}>
                             <div className="i">
@@ -81,14 +89,14 @@ class SignIn extends Component {
                                 <i className="fas fa-lock"></i>
                             </div>
                             <div>
-                                <h5>Password</h5>
+                                <h5>{language === "EN" ? "Password" : "Hasło"}</h5>
                                 <input type="password" name="password" onChange={this.onChange} />
                             </div>
                         </div>
-                        <a href="/">Forgot your password?</a>
+                        <a href="/">{language === "EN" ? "Forgot your password?" : "Zapomniałeś hasło?"}</a>
                         <p className="error-message ">{errorMessage}</p>
-                        <input type="button" className="btn" value="Sign In" onClick={this.signIn} />
-                        <p>You don't have an account? <a href="/sign-up">Sign Up!</a></p>
+                        <input type="button" className="btn" value={language === "EN" ? "Sign In" : "Zaloguj się"} onClick={this.signIn} />
+                        <p>{language === "EN" ? "You don't have an account?" : "Nie masz jeszcze konta?"} <a href="/sign-up">{language === "EN" ? "Sign Up!" : "Załóż teraz!"}</a></p>
                     </form>
                 </div>
                 <div className="sign-in-image">

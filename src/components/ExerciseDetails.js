@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
-import LineChart from "./ExerciseSessionChart";
-import FullPageLoader from "./FullPageLoader";
+import LineChart from "../charts/ExerciseSessionChart";
+import FullPageLoader from "../animatedComponents/FullPageLoader";
 import Error from "../Error";
 import transformDate from "../Helpers";
 
@@ -41,20 +41,23 @@ class ExerciseDetails extends Component {
 
     addLog() {
         const data = {
-            exerciseId: this.state.exerciseId,
+            exerciseId: parseInt(this.state.exerciseId, 10),
             weight: parseFloat(this.state.weight),
             reps: parseInt(this.state.reps, 10)
         }
 
         axios.post("api/logs", data)
         .then(response => {
+            console.log(response.data);
             this.setState({
                 errorMessage: ""
             })
+            
             this.props.history.push("/exercises/" + this.state.exerciseId);
             window.location.reload();
         })
         .catch(error => {
+            console.log(error.message);
             this.setState({
                 errorMessage: "Ups! Something went wrong..."
             })
@@ -116,6 +119,7 @@ class ExerciseDetails extends Component {
 
     render() {
         let { exercise, logs, itemCount, isLoaded, errorStatusCode } = this.state;
+        let language = sessionStorage.getItem("language");
 
         if (!isLoaded) {
             return <FullPageLoader />;
@@ -141,7 +145,7 @@ class ExerciseDetails extends Component {
                                     <i className="fas fa-sort-numeric-up-alt"></i>
                                 </div>
                                 <div>
-                                    <h5>Reps</h5>
+                                    <h5>{language === "EN" ? "Reps" : "Powtórzenia"}</h5>
                                     <input type="number" name="reps" onChange={this.onChange} />
                                 </div>
                             </div>
@@ -150,24 +154,24 @@ class ExerciseDetails extends Component {
                                     <i className="fas fa-weight"></i>
                                 </div>
                                 <div>
-                                    <h5>Weight</h5>
+                                    <h5>{language === "EN" ? "Weight" : "Ciężar"}</h5>
                                     <input type="number" name="weight" onChange={this.onChange} />
                                 </div>
                             </div>
                         <div className="submit-box">
-                            <button onClick={this.addLog} disabled={this.state.weight && this.state.reps ? "" : "disabled"}>Add</button>
+                            <button onClick={this.addLog} disabled={this.state.weight && this.state.reps ? "" : "disabled"}>{language === "EN" ? "Add" : "Dodaj"}</button>
                         </div>
                     </div>
                     {logs && logs.map((log, index) => (
                         index < itemCount && <table className="exercise-details">
                             <thead>
-                                <tr key={index++}>
+                                <tr key={log.uniqueId}>
                                     <th className="light-blue" colSpan="3">{transformDate(log.date)}</th>
                                 </tr>
-                                <tr key={index++}>
+                                <tr key={log.uniqueId}>
                                     <th>#</th>
-                                    <th>Reps</th>
-                                    <th>Weight</th>
+                                    <th>{language === "EN" ? "Reps" : "Powtórzenia"}</th>
+                                    <th>{language === "EN" ? "Weight" : "Ciężar"}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -182,7 +186,7 @@ class ExerciseDetails extends Component {
                         </table>
                     ))}
                     {logs && itemCount < logs.length && <div id="show-more">
-                        <button onClick={this.incItemLimit}>Show more</button>
+                        <button onClick={this.incItemLimit}>{language === "EN" ? "Show more" : "Pokaż więcej"}</button>
                     </div> }
                 </div>
 

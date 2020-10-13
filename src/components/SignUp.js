@@ -58,18 +58,19 @@ class SignIn extends Component {
     render() {
 
         let { username, email, password, repassword } = this.state;
+        let language = sessionStorage.getItem("language");
 
         return (
             <div className="sign-up">
                 <div className="sign-up-container">
-                    <h1>Create an account!</h1>
+                    <h1>{language === "EN" ? "Create an account!" : "Załóż konto!"}</h1>
                     <form>
                         <div className={`inputs email ${username ? "focus" : ""}`}>
                             <div className="i">
                                 <i className="fas fa-user"></i>
                             </div>
                             <div>
-                                <h5>Username</h5>
+                                <h5>{language === "EN" ? "Username" : "Nazwa użytkownika"}</h5>
                                 <input type="text" name="username" onChange={this.onChange} />
                             </div>
                         </div>
@@ -87,7 +88,7 @@ class SignIn extends Component {
                                 <i className="fas fa-lock"></i>
                             </div>
                             <div>
-                                <h5>Password</h5>
+                                <h5>{language === "EN" ? "Password" : "Hasło"}</h5>
                                 <input type="password" name="password" onChange={this.onChange} />
                             </div>
                         </div>
@@ -96,18 +97,18 @@ class SignIn extends Component {
                                 <i className="fas fa-lock"></i>
                             </div>
                             <div>
-                                <h5>Confirm Password</h5>
+                                <h5>{language === "EN" ? "Confirm Password" : "Potwierdź Hasło"}</h5>
                                 <input type="password" name="repassword" onChange={this.onChange} />
                             </div>
                         </div>
                         <p className="error-message ">{this.state.errorMessage}</p>
-                        <input type="button" className="btn" value="Sign Up" onClick={this.signUp} />
-                        <p>Already have an account? <a href="/sign-in">Sign In!</a></p>
+                        <input type="button" className="btn" value={language === "EN" ? "Sign Up" : "Zarejestruj się"} onClick={this.signUp} />
+                        <p>{language === "EN" ? "Already have an account?" : "Już posiadasz konto?"} <a href="/sign-in">{language === "EN" ? "Sign In!" : "Zaloguj się!"}</a></p>
                     </form>
                 </div>
                 <div className="sign-up-image">
                     <svg width="893" height="580" viewBox="0 0 893 580" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0)">
+                        <g clipPath="url(#clip0)">
                             <path id="base" d="M683.656 548.528L730.114 479.44L683.751 555.96L683.848 563.734C680.456 563.76 677.098 563.704 673.772 563.565L676.076 463.634L676.013 462.863L676.098 462.714L676.318 453.272L625.442 379.404L676.258 446.204L676.439 448.2L678.179 372.699L634.235 296.115L678.304 359.435L677.844 203.016L677.845 202.495L677.86 203.007L680.777 326.287L720.827 276.211L680.909 336.907L681.783 404.441L718.636 338.53L681.918 414.37L682.405 451.922L736 360.109L682.568 465.023L683.656 548.528Z" fill="#484848" />
                             <path id="base" d="M840.005 550.704L886.463 481.616L840.101 558.136L840.197 565.91C836.806 565.936 833.447 565.88 830.121 565.741L832.426 465.81L832.362 465.039L832.448 464.89L832.668 455.448L781.791 381.581L832.608 448.38L832.788 450.376L834.529 374.875L790.585 298.292L834.654 361.611L834.194 205.192L834.195 204.671L834.21 205.183L837.127 328.463L877.177 278.387L837.258 339.083L838.132 406.617L874.986 340.707L838.268 416.546L838.754 454.099L892.35 362.286L838.917 467.199L840.005 550.704Z" fill="#524D4D" />
                             <g id="panel">

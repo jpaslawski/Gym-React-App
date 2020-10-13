@@ -6,6 +6,8 @@ function WeightChart(props) {
     let dates = [];
     let weight = [];
 
+    let language = sessionStorage.getItem("language");
+
     logs && logs.forEach(function(log) {
         dates.push(log.submitDate);
         weight.push(log.currentWeight);
@@ -15,7 +17,7 @@ function WeightChart(props) {
         labels: dates,
         datasets: [
             {
-                label: 'Weight',
+                label: `${language === "EN" ? "Weight" : "Waga"}`,
                 fill: true,
                 backgroundColor: "rgba(219, 76, 178, 0.4)",
                 borderColor: "#DB4CB2",
@@ -29,7 +31,7 @@ function WeightChart(props) {
     const options = {
         title: {
             display: true,
-            text: 'Weight Chart'
+            text: `${language === "EN" ? "Weight Chart" : "Wykres Wagi"}`
         },
         scales: {
             xAxes: [{

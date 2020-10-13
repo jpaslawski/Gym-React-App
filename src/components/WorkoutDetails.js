@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import FullPageLoader from "./FullPageLoader";
+import FullPageLoader from "../animatedComponents/FullPageLoader";
 import Error from "../Error";
 import NewExerciseToWorkout from "./NewExerciseToWorkout";
 import ExistingExerciseToWorkout from "./ExistingExerciseToWorkout";
@@ -112,6 +112,7 @@ class WorkoutDetails extends Component {
 
     render() {
         let { isLoaded, errorStatusCode, newExercise, existingExercise, workoutId } = this.state;
+        let language = sessionStorage.getItem("language");
 
         if (!isLoaded) {
             return <FullPageLoader />;
@@ -131,8 +132,8 @@ class WorkoutDetails extends Component {
                                     <h5>{exercise.info}</h5>
                                 </div>
                                 <div className="card-buttons">
-                                    <button onClick={this.redirectToExerciseDetails.bind(this, exercise.id)}>Logs</button>
-                                    <button className="error-btn" onClick={this.deleteExerciseFromWorkout.bind(this, exercise.id)}>Delete</button>
+                                    <button onClick={this.redirectToExerciseDetails.bind(this, exercise.id)}>{language === "EN" ? "Logs" : "Wyniki"}</button>
+                                    <button className="error-btn" onClick={this.deleteExerciseFromWorkout.bind(this, exercise.id)}>{language === "EN" ? "Delete" : "Usuń"}</button>
                                 </div>
                             </div>
                         ))}
@@ -142,10 +143,10 @@ class WorkoutDetails extends Component {
                             <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>Choose one option:</h2>
+                            <h2>{language === "EN" ? "Choose one option" : "Wybierz opcję"}:</h2>
                             {/* New Exercise Section */}
                             <button className="modal-option" onClick={this.setNewState}>
-                                <div>Add a new Exercise</div><i className={`fas ${newExercise ? "fa-chevron-up" : "fa-chevron-down"}`}></i>
+                                <div>{language === "EN" ? "Add a new Exercise" : "Dodaj nowe ćwiczenie"}</div><i className={`fas ${newExercise ? "fa-chevron-up" : "fa-chevron-down"}`}></i>
                             </button>
                             <div className="expandable">
                                 <div className={`${newExercise ? "show" : "hide"}`}>
@@ -154,7 +155,7 @@ class WorkoutDetails extends Component {
                             </div>
                             {/* Existing Exercise Section */}
                             <button className="modal-option" onClick={this.setExistingState}>
-                                <div>Add an existing Exercise</div><i className={`fas ${existingExercise ? "fa-chevron-up" : "fa-chevron-down"}`}></i>
+                                <div>{language === "EN" ? "Add an existing Exercise" : "Dodaj istniejące ćwiczenie"}</div><i className={`fas ${existingExercise ? "fa-chevron-up" : "fa-chevron-down"}`}></i>
                             </button>
                             <div className="expandable">
                                 <div className={`${existingExercise ? "show" : "hide"}`}>

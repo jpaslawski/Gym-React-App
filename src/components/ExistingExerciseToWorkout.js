@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
-import FullPageLoader from "./FullPageLoader";
+import FullPageLoader from "../animatedComponents/FullPageLoader";
 
 class ExistingExerciseToWorkout extends Component {
 
@@ -68,12 +68,11 @@ class ExistingExerciseToWorkout extends Component {
 
     addExercise() {
         let exerciseId = this.state.chosenExercise.id;
-        console.log("Exercise: " + this.state.chosenExercise.id);
         let workoutId = this.props.workoutId;
 
         axios.put("api/exercises/" + exerciseId + "/" + workoutId)
         .then(this.props.history.push("/workouts/" + workoutId))
-        //.then(window.location.reload())
+        .then(window.location.reload())
         .catch(error => {
             this.setState({
                 errorMessage: error.response.statusText
@@ -114,6 +113,8 @@ class ExistingExerciseToWorkout extends Component {
 
     render() {
         let {isLoaded, exercisesByCategory} = this.state;
+        let language = sessionStorage.getItem("language");
+
         if (!isLoaded) {
             return (<FullPageLoader />);
         } else {
@@ -124,7 +125,7 @@ class ExistingExerciseToWorkout extends Component {
                             <i className="fas fa-project-diagram"></i>
                         </div>
                         <div>
-                            <h5>Category</h5>
+                            <h5>{language === "EN" ? "Category" : "Kategoria"}</h5>
                             <select name="categoryEx" onChange={this.onChangeCategory}>
                                 <option value="null">-</option>
                                 {this.state.categories && this.state.categories.map((item, index) => (
@@ -138,16 +139,16 @@ class ExistingExerciseToWorkout extends Component {
                             <i className="fas fa-dumbbell"></i>
                         </div>
                         <div>
-                            <h5>Exercise</h5>
+                            <h5>{language === "EN" ? "Exercise" : "Ćwiczenie"}</h5>
                             <select name="exercisesByCategory" onChange={this.onChangeExercise}>
                                 {exercisesByCategory && exercisesByCategory.map((item) => (
-                                    <option value={item.id}>{item.name}</option>
+                                    <option value={item.id} key={item.uniqueId}>{item.name}</option>
                                 ))}
                             </select>
                         </div>
                     </div>
                     <div className={(exercisesByCategory === undefined || exercisesByCategory.length === 0) ? "" : "none"}>
-                        <h5>No available exercises in this category</h5>
+                        <h5>{language === "EN" ? "No available exercises in this category!" : "Nie znaleziono dostęnych ćwiczeń w tej kategorii!"}</h5>
                     </div>
                     <p className="error-message ">{this.state.errorMessage}</p>
                     { !(exercisesByCategory === undefined || exercisesByCategory.length === 0) && <input type="button"
