@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { withRouter } from 'react-router-dom';
+import { LANGUAGE } from "../constants";
 
 class SignIn extends Component {
 
@@ -20,6 +20,7 @@ class SignIn extends Component {
 
     componentDidMount() {
         sessionStorage.setItem("language", "PL");
+        sessionStorage.setItem("layoutPreference", "TABLE");
     }
 
     signIn() {
@@ -38,7 +39,8 @@ class SignIn extends Component {
                     let decodedJwtData = JSON.parse(decodedJwtJsonData);
                     sessionStorage.setItem("role", decodedJwtData.permissions);
                     axios.defaults.headers.common['Authorization'] = "Bearer " + response.data.token;
-                    this.props.history.push("/home");
+                    let redirectUrl = decodedJwtData.permissions === "ROLE_ADMIN" ? "/administration/home" : "/dashboard/home";
+                    this.props.history.push(redirectUrl);
                 })
                 .catch(error => {
                     if (!error.response) {
@@ -73,7 +75,7 @@ class SignIn extends Component {
         return (
             <div className="sign-in">
                 <div className="sign-in-container">
-                    <h1>{language === "EN" ? "Welcome!" : "Witaj!"}</h1>
+                    <h1>{language === LANGUAGE.english ? "Welcome!" : "Witaj!"}</h1>
                     <form>
                         <div className={`inputs email ${email ? "focus" : ""}`}>
                             <div className="i">
@@ -89,14 +91,14 @@ class SignIn extends Component {
                                 <i className="fas fa-lock"></i>
                             </div>
                             <div>
-                                <h5>{language === "EN" ? "Password" : "Hasło"}</h5>
+                                <h5>{language === LANGUAGE.english ? "Password" : "Hasło"}</h5>
                                 <input type="password" name="password" onChange={this.onChange} />
                             </div>
                         </div>
-                        <a href="/">{language === "EN" ? "Forgot your password?" : "Zapomniałeś hasło?"}</a>
+                        <a href="/">{language === LANGUAGE.english ? "Forgot your password?" : "Zapomniałeś hasło?"}</a>
                         <p className="error-message ">{errorMessage}</p>
-                        <input type="button" className="btn" value={language === "EN" ? "Sign In" : "Zaloguj się"} onClick={this.signIn} />
-                        <p>{language === "EN" ? "You don't have an account?" : "Nie masz jeszcze konta?"} <a href="/sign-up">{language === "EN" ? "Sign Up!" : "Załóż teraz!"}</a></p>
+                        <input type="button" className="btn" value={language === LANGUAGE.english ? "Sign In" : "Zaloguj się"} onClick={this.signIn} />
+                        <p>{language === LANGUAGE.english ? "You don't have an account?" : "Nie masz jeszcze konta?"} <a href="/sign-up">{language === LANGUAGE.english ? "Sign Up!" : "Załóż teraz!"}</a></p>
                     </form>
                 </div>
                 <div className="sign-in-image">
@@ -228,4 +230,4 @@ class SignIn extends Component {
     }
 }
 
-export default withRouter(SignIn);
+export default SignIn;

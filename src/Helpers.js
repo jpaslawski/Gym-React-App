@@ -15,3 +15,11 @@ export default function transformDate(theDate) {
 
     return newDateFormat;
 }
+
+export function extractCategory(object) {
+    if (object == null) {
+        return "-";
+    }
+    let json = JSON.stringify(object);
+    return JSON.parse(json).category;
+}

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
+import { LANGUAGE } from "../constants";
 
 class SignIn extends Component {
 
@@ -63,14 +64,14 @@ class SignIn extends Component {
         return (
             <div className="sign-up">
                 <div className="sign-up-container">
-                    <h1>{language === "EN" ? "Create an account!" : "Załóż konto!"}</h1>
+                    <h1>{language === LANGUAGE.english ? "Create an account!" : "Załóż konto!"}</h1>
                     <form>
                         <div className={`inputs email ${username ? "focus" : ""}`}>
                             <div className="i">
                                 <i className="fas fa-user"></i>
                             </div>
                             <div>
-                                <h5>{language === "EN" ? "Username" : "Nazwa użytkownika"}</h5>
+                                <h5>{language === LANGUAGE.english ? "Username" : "Nazwa użytkownika"}</h5>
                                 <input type="text" name="username" onChange={this.onChange} />
                             </div>
                         </div>
@@ -88,7 +89,7 @@ class SignIn extends Component {
                                 <i className="fas fa-lock"></i>
                             </div>
                             <div>
-                                <h5>{language === "EN" ? "Password" : "Hasło"}</h5>
+                                <h5>{language === LANGUAGE.english ? "Password" : "Hasło"}</h5>
                                 <input type="password" name="password" onChange={this.onChange} />
                             </div>
                         </div>
@@ -97,13 +98,13 @@ class SignIn extends Component {
                                 <i className="fas fa-lock"></i>
                             </div>
                             <div>
-                                <h5>{language === "EN" ? "Confirm Password" : "Potwierdź Hasło"}</h5>
+                                <h5>{language === LANGUAGE.english ? "Confirm Password" : "Potwierdź Hasło"}</h5>
                                 <input type="password" name="repassword" onChange={this.onChange} />
                             </div>
                         </div>
                         <p className="error-message ">{this.state.errorMessage}</p>
-                        <input type="button" className="btn" value={language === "EN" ? "Sign Up" : "Zarejestruj się"} onClick={this.signUp} />
-                        <p>{language === "EN" ? "Already have an account?" : "Już posiadasz konto?"} <a href="/sign-in">{language === "EN" ? "Sign In!" : "Zaloguj się!"}</a></p>
+                        <input type="button" className="btn" value={language === LANGUAGE.english ? "Sign Up" : "Zarejestruj się"} onClick={this.signUp} />
+                        <p>{language === LANGUAGE.english ? "Already have an account?" : "Już posiadasz konto?"} <a href="/sign-in">{language === LANGUAGE.english ? "Sign In!" : "Zaloguj się!"}</a></p>
                     </form>
                 </div>
                 <div className="sign-up-image">

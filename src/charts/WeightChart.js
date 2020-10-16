@@ -1,5 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
+import { LANGUAGE } from '../constants';
 
 function WeightChart(props) {
     const logs = props.logs;
@@ -17,7 +18,7 @@ function WeightChart(props) {
         labels: dates,
         datasets: [
             {
-                label: `${language === "EN" ? "Weight" : "Waga"}`,
+                label: `${language === LANGUAGE.english ? "Weight" : "Waga"}`,
                 fill: true,
                 backgroundColor: "rgba(219, 76, 178, 0.4)",
                 borderColor: "#DB4CB2",
@@ -31,7 +32,7 @@ function WeightChart(props) {
     const options = {
         title: {
             display: true,
-            text: `${language === "EN" ? "Weight Chart" : "Wykres Wagi"}`
+            text: `${language === LANGUAGE.english ? "Weight Chart" : "Wykres Wagi"}`
         },
         scales: {
             xAxes: [{

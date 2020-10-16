@@ -4,6 +4,7 @@ import FullPageLoader from "../animatedComponents/FullPageLoader";
 import axios from "axios";
 import Error from "../Error";
 import ProgressBar from "../animatedComponents/ProgressBar";
+import { LANGUAGE } from "../constants";
 
 class Home extends Component {
 
@@ -37,7 +38,7 @@ class Home extends Component {
                     errorMessage: ""
                 })
                 sessionStorage.setItem('WeightLogModalShow', false);
-                this.props.history.push("/home");
+                this.props.history.push("home");
                 window.location.reload();
             })
             .catch(error => {
@@ -114,11 +115,11 @@ class Home extends Component {
         let language = sessionStorage.getItem("language");
 
         let progressContainer =  <div className="progress-container">
-                                    <label>{language === "EN" ? "Protein" : "Białko"}</label>
+                                    <label>{language === LANGUAGE.english ? "Protein" : "Białko"}</label>
                                     <ProgressBar percentage={userDailyInfo.proteinPercentage} background="0" />
-                                    <label>{language === "EN" ? "Carbs" : "Węglowodany"}</label>
+                                    <label>{language === LANGUAGE.english ? "Carbs" : "Węglowodany"}</label>
                                     <ProgressBar percentage={userDailyInfo.carbsPercentage} background="1" />
-                                    <label>{language === "EN" ? "Fat" : "Tłuszcze"}</label>
+                                    <label>{language === LANGUAGE.english ? "Fat" : "Tłuszcze"}</label>
                                     <ProgressBar percentage={userDailyInfo.fatPercentage} background="2" />
                                 </div>;
 
@@ -127,12 +128,12 @@ class Home extends Component {
         } else if (!isLoaded) {
             return <FullPageLoader />;
         } else if (errorStatusCode) {
-            return <Error errorCode={errorStatusCode} errorInfo={errorMessage} errorEnd={language === "EN" ? "Try again later!" : "Spróbuj ponownie później!"} />;
+            return <Error errorCode={errorStatusCode} errorInfo={errorMessage} errorEnd={language === LANGUAGE.english ? "Try again later!" : "Spróbuj ponownie później!"} />;
         } else {
             return (
                 <div className="main-content home">
                     <div className="pageLabel">
-                        <h1>{language === "EN" ? "Home" : "Strona główna"}</h1>
+                        <h1>{language === LANGUAGE.english ? "Home" : "Strona główna"}</h1>
                     </div>
                     <div className="card-container">
                         <div className="card">
@@ -142,7 +143,7 @@ class Home extends Component {
                                 </div>
                                 <div className="general">
                                     <h3>{userDailyInfo.currentWeight} kg</h3>
-                                    <h4>{language === "EN" ? "Current Weight" : "Aktualna waga"}</h4>
+                                    <h4>{language === LANGUAGE.english ? "Current Weight" : "Aktualna waga"}</h4>
                                 </div>
                             </div>
                         </div>
@@ -153,14 +154,14 @@ class Home extends Component {
                                 </div>
                                 <div className="general">
                                     <h3>{userDailyInfo.currentCalorieBalance} kcal</h3>
-                                    <h4>{language === "EN" ? "Daily Balance of Calories" : "Dzienny balans kaloryczny"}</h4>
+                                    <h4>{language === LANGUAGE.english ? "Daily Balance of Calories" : "Dzienny balans kaloryczny"}</h4>
                                 </div>
                             </div>
                         </div>
                         <div className="wrapper">
-                            <h3>{language === "EN" ? "Macronutrients Daily Goal" : "Dzienne zapotrzebowanie na makroskładniki"}</h3>
+                            <h3>{language === LANGUAGE.english ? "Macronutrients Daily Goal" : "Dzienne zapotrzebowanie na makroskładniki"}</h3>
                             {(userDailyInfo.proteinPercentage && userDailyInfo.carbsPercentage && userDailyInfo.fatPercentage) ? 
-                                progressContainer : <p className="no-content">{language === "EN" ? "You haven' t submitted any meals today..." : "Nie dodałeś dzisiaj żadnych posiłków..."}</p>}
+                                progressContainer : <p className="no-content">{language === LANGUAGE.english ? "You haven' t submitted any meals today..." : "Nie dodałeś dzisiaj żadnych posiłków..."}</p>}
                         </div>
                     </div>
                     <div className={showModal ? "modal-show" : ""} >
@@ -168,19 +169,19 @@ class Home extends Component {
                             <a href="# " onClick={this.handleModal}>
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>{language === "EN" ? "Daily weight check" : "Codzienne sprawdzenie wagi"}</h2>
+                            <h2>{language === LANGUAGE.english ? "Daily weight check" : "Codzienne sprawdzenie wagi"}</h2>
                             <div className="logs-form" style={{ boxShadow: "none" }}>
                                 <div className={`inputs email ${this.state.weightLog ? "focus" : ""}`}>
                                     <div className="i">
                                         <i className="fas fa-weight"></i>
                                     </div>
                                     <div>
-                                        <h5>{language === "EN" ? "Weight" : "Waga"}</h5>
+                                        <h5>{language === LANGUAGE.english ? "Weight" : "Waga"}</h5>
                                         <input type="number" name="weightLog" onChange={this.onChange} />
                                     </div>
                                 </div>
                                 <div className="submit-box">
-                                    <button onClick={this.addLog} disabled={this.state.weightLog ? "" : "disabled"}>{language === "EN" ? "Update" : "Aktualizuj"}</button>
+                                    <button onClick={this.addLog} disabled={this.state.weightLog ? "" : "disabled"}>{language === LANGUAGE.english ? "Update" : "Aktualizuj"}</button>
                                 </div>
                             </div>
                         </div>

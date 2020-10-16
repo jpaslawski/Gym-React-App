@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import axios from "axios";
 import FullPageLoader from "../animatedComponents/FullPageLoader";
 import Error from "../Error";
+import { LANGUAGE, USER_ROLE } from "../constants";
 
 class Users extends Component {
 
@@ -60,18 +61,18 @@ class Users extends Component {
             return (
                 <div className="main-content">
                     <div className="pageLabel">
-                        <h1>{language === "EN" ? "Users" : "Użytkownicy"}</h1>
+                        <h1>{language === LANGUAGE.english ? "Users" : "Użytkownicy"}</h1>
                     </div>
                     <table>
                         <thead>
                         <tr>
                             <th style={{"width": "5%"}}>ID</th>
-                            <th>{language === "EN" ? "Username" : "Nazwa użytkownika"}</th>
+                            <th>{language === LANGUAGE.english ? "Username" : "Nazwa użytkownika"}</th>
                             <th>Email</th>
-                            <th style={{"width": "10%"}}>{language === "EN" ? "Permissions" : "Uprawnienia"}</th>
-                            <th style={{"width": "10%"}}>{language === "EN" ? "Weight" : "Waga"}</th>
-                            <th style={{"width": "10%"}}>{language === "EN" ? "Height" : "Wzrost"}</th>
-                            <th style={{"width": "10%"}}>{language === "EN" ? "Age" : "Wiek"}</th>
+                            <th style={{"width": "10%"}}>{language === LANGUAGE.english ? "Permissions" : "Uprawnienia"}</th>
+                            <th style={{"width": "10%"}}>{language === LANGUAGE.english ? "Weight" : "Waga"}</th>
+                            <th style={{"width": "10%"}}>{language === LANGUAGE.english ? "Height" : "Wzrost"}</th>
+                            <th style={{"width": "10%"}}>{language === LANGUAGE.english ? "Age" : "Wiek"}</th>
             {/*<th>Actions</th>*/}
                         </tr>
                         </thead>
@@ -81,7 +82,7 @@ class Users extends Component {
                                 <td key={user.uniqueId}>{user.id}</td>
                                 <td key={user.uniqueId}>{user.username}</td>
                                 <td key={user.uniqueId}>{user.email}</td>
-                                <td key={user.uniqueId}><i className={user.permissions === "ROLE_ADMIN" ? "fas fa-crown":"fas fa-user"}></i></td>
+                                <td key={user.uniqueId}><i className={user.permissions === USER_ROLE.admin ? "fas fa-crown":"fas fa-user"}></i></td>
                                 <td key={user.uniqueId}>{user.weight}</td>
                                 <td key={user.uniqueId}>{user.height}</td>
                                 <td key={user.uniqueId}>{this.calculateAge(user.dateOfBirth)}</td>

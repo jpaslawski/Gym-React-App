@@ -858,7 +858,7 @@ input[type=button]:disabled {
     background-color: white;
     border-radius: 10px;
     padding: 25px;
-    margin: 5px;
+    margin: 0 5px 5px 0;
     position: relative;
     box-shadow: 0 9px 18px 0 rgba(0,0,0,.1);
 }
@@ -904,6 +904,15 @@ input[type=button]:disabled {
 
 .card-info {
     margin-bottom: 50px;
+}
+
+.meal-card-info {
+    display: grid; 
+    grid-template-columns: 50% 50%;
+}
+
+.meal-card-info h5 {
+    margin: 10px 0;
 }
 
 .card h4 {
@@ -1551,6 +1560,11 @@ canvas {
         grid-template-columns: 1fr 1fr;
     }
 
+    .exercise .card-container,
+    .workout .card-container {
+        grid-template-columns: 1fr;
+    }
+
     .meal-container {
         grid-template-columns: 1fr 1fr 1fr;
     }
@@ -1826,6 +1840,11 @@ canvas {
 
     .card-container {
         grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .exercise .card-container,
+    .workout .card-container {
+        grid-template-columns: 1fr 1fr;
     }
 
     .meal-container {

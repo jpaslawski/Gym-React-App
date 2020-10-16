@@ -3,6 +3,7 @@ import FullPageLoader from "../animatedComponents/FullPageLoader";
 import axios from "axios";
 import Error from "../Error";
 import transformDate from "../Helpers";
+import { LANGUAGE } from "../constants";
 
 class Diet extends Component {
 
@@ -182,11 +183,11 @@ class Diet extends Component {
                     </th>
                 </tr>
                 <tr>
-                    <th>{language === "EN" ? "Name" : "Nazwa"}</th>
-                    <th>{language === "EN" ? "Calories" : "Kalorie"}</th>
-                    <th>{language === "EN" ? "Protein" : "Białko"}</th>
-                    <th>{language === "EN" ? "Carbs" : "Węglowodany"}</th>
-                    <th>{language === "EN" ? "Fat" : "Tłuszcze"}</th>
+                    <th>{language === LANGUAGE.english ? "Name" : "Nazwa"}</th>
+                    <th>{language === LANGUAGE.english ? "Calories" : "Kalorie"}</th>
+                    <th>{language === LANGUAGE.english ? "Protein" : "Białko"}</th>
+                    <th>{language === LANGUAGE.english ? "Carbs" : "Węglowodany"}</th>
+                    <th>{language === LANGUAGE.english ? "Fat" : "Tłuszcze"}</th>
                 </tr>
             </thead>
             <tbody>
@@ -199,7 +200,7 @@ class Diet extends Component {
                         <td key={++index}>{(log.referredMeal.fat * log.portionCount).toFixed(2)} g</td>
                     </tr>))}
                 { currentLogsSet && <tr className="summary-row">
-                    <td>{language === "EN" ? "Sum" : "Suma"}</td>
+                    <td>{language === LANGUAGE.english ? "Sum" : "Suma"}</td>
                     <td>{parseFloat(currentLogsSet.caloriesSum).toFixed(2)} kcal</td>
                     <td>{parseFloat(currentLogsSet.proteinSum).toFixed(2)} g</td>
                     <td>{parseFloat(currentLogsSet.carbsSum).toFixed(2)} g</td>
@@ -216,11 +217,11 @@ class Diet extends Component {
             return (
                 <div className="main-content">
                     <div className="pageLabel">
-                        <h1>{language === "EN" ? "Diet" : "Dieta"}</h1>
-                        <input name="mealName" placeholder={language === "EN" ? "Find your meal..." : "Znajdź posiłek..."} onChange={this.onChange} />
+                        <h1>{language === LANGUAGE.english ? "Diet" : "Dieta"}</h1>
+                        <input name="mealName" placeholder={language === LANGUAGE.english ? "Find your meal..." : "Znajdź posiłek..."} onChange={this.onChange} />
                     </div>
                     <section>
-                        <h3>{language === "EN" ? "Choose the meal you want to include in your daily diet:" : "Wybierz posiłek, który chcesz dodać do dziennego bilansu:"}</h3>
+                        <h3>{language === LANGUAGE.english ? "Choose the meal you want to include in your daily diet:" : "Wybierz posiłek, który chcesz dodać do dziennego bilansu:"}</h3>
                         <div className="meal-container">
                             {mealsToDisplay && mealsToDisplay.map((meal, index) => (
                                 index < itemCount &&
@@ -233,35 +234,35 @@ class Diet extends Component {
                             ))}
                         </div>
                         {itemCount < mealsToDisplay.length && <div id="show-more">
-                            <button onClick={this.incItemLimit}>{language === "EN" ? "Show more" : "Pokaż więcej"}</button>
+                            <button onClick={this.incItemLimit}>{language === LANGUAGE.english ? "Show more" : "Pokaż więcej"}</button>
                             </div> }
                     </section>
-                    { Object.keys(currentLogsSet).length !== 0 ? tableOfLogs : <div className="no-content">{language === "EN" ? "No meal logs found!" : "Nie znaleziono zapisów z poprzednich dni!"}</div> }
+                    { Object.keys(currentLogsSet).length !== 0 ? tableOfLogs : <div className="no-content">{language === LANGUAGE.english ? "No meal logs found!" : "Nie znaleziono zapisów z poprzednich dni!"}</div> }
                     <div className="modal" id="modal">
                         <div className="modal-container">
                             <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>{language === "EN" ? "Adding" : "Dodawanie"} "{this.state.mealToAdd.name}" {language === "EN" ? "to your daily balance" : "do twojego dziennego bilansu"}</h2>
+                            <h2>{language === LANGUAGE.english ? "Adding" : "Dodawanie"} "{this.state.mealToAdd.name}" {language === LANGUAGE.english ? "to your daily balance" : "do twojego dziennego bilansu"}</h2>
                             <div className="macro-summary">
-                                <div className="macro-name">{language === "EN" ? "Calories" : "Kalorie"}:</div>
+                                <div className="macro-name">{language === LANGUAGE.english ? "Calories" : "Kalorie"}:</div>
                                 <div className="macro-value">{(this.state.mealToAdd.calories * this.state.portionCount).toFixed(2)} kcal</div>
-                                <div className="macro-name">{language === "EN" ? "Protein" : "Białko"}:</div>
+                                <div className="macro-name">{language === LANGUAGE.english ? "Protein" : "Białko"}:</div>
                                 <div className="macro-value">{(this.state.mealToAdd.protein * this.state.portionCount).toFixed(2)} g</div>
-                                <div className="macro-name">{language === "EN" ? "Carbs" : "Węglowodany"}:</div>
+                                <div className="macro-name">{language === LANGUAGE.english ? "Carbs" : "Węglowodany"}:</div>
                                 <div className="macro-value">{(this.state.mealToAdd.carbs * this.state.portionCount).toFixed(2)} g</div>
-                                <div className="macro-name">{language === "EN" ? "Fat" : "Tłuszcze"}:</div>
+                                <div className="macro-name">{language === LANGUAGE.english ? "Fat" : "Tłuszcze"}:</div>
                                 <div className="macro-value">{(this.state.mealToAdd.fat * this.state.portionCount).toFixed(2)} g</div>
-                                <div className="macro-name" style={{ marginTop: "4px" }}>{language === "EN" ? "Portion" : "Porcja"}:</div>
+                                <div className="macro-name" style={{ marginTop: "4px" }}>{language === LANGUAGE.english ? "Portion" : "Porcja"}:</div>
                                 <div className="macro-portion">
                                     <div className="macro-value">{this.state.mealToAdd.portionWeight} g x</div>
                                     <input type="number" name="portionCount" min="0.5" step="0.5" value={this.state.portionCount} onChange={this.onChangePortionCount} />
                                 </div>
                             </div>
                             <p className="error-message ">{this.state.errorMessage}</p>
-                            <input type="button" value={language === "EN" ? "Submit" : "Zapisz"} onClick={this.addMealLog} disabled={this.portionCount > 0} />
+                            <input type="button" value={language === LANGUAGE.english ? "Submit" : "Zapisz"} onClick={this.addMealLog} disabled={this.portionCount > 0} />
                             <a href="# ">
-                                <button className="secondary-btn">{language === "EN" ? "Cancel" : "Anuluj"}</button>
+                                <button className="secondary-btn">{language === LANGUAGE.english ? "Cancel" : "Anuluj"}</button>
                             </a>
                         </div>
                     </div>

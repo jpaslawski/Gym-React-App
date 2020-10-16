@@ -13,7 +13,7 @@ import Home from "./components/Home";
 import WorkoutDetails from "./components/WorkoutDetails";
 import ExerciseDetails from "./components/ExerciseDetails";
 import Workouts from "./components/Workouts";
-import Header from "./Header";
+import Header from "./menus/Header";
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import Meals from "./components/Meals";
@@ -41,9 +41,9 @@ ReactDOM.render(
                     <Route exact path="/exercises/:exerciseId" component={ExerciseDetails} />
                     <Route path={["/dashboard/meals", "/administration/meals"]} component={Meals} />
                     <Route path={["/dashboard/diet", "/administration/diet"]} component={Diet} />
-                    <Route exact path="/administration/settings" component={Settings} />
-                    <Route exact path="/dashboard/profile" component={Profile} />
-                    <Route exact path="/home" component={Home} />
+                    <Route path={["/dashboard/settings", "/administration/settings"]} component={Settings} />
+                    <Route path={["/dashboard/profile", "/administration/profile"]} component={Profile} />
+                    <Route path={["/dashboard/home", "/administration/home"]} component={Home} />
                     <Route exact path="/workouts/:workoutId" component={WorkoutDetails} />
                     <Route path={["/dashboard/workouts", "/administration/workouts"]} component={Workouts} />
                     <Route exact path="/" component={App} />

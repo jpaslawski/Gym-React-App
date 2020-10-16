@@ -1,0 +1,89 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+
+const { LANGUAGE, STATUS, USER_ROLE } = require("../../constants");
+
+const MealTable = ({ meals, setUpdateMode, selectMeal }) => {
+
+    let language = sessionStorage.getItem("language");
+    let userRole = sessionStorage.getItem("role");
+
+    const setMeal = (id, name, calories, protein, carbs, fat, portionWeight, status) => {
+        const meal = {
+            id: id,
+            name: name,
+            calories: calories,
+            protein: protein,
+            carbs: carbs,
+            fat: fat,
+            portionWeight: portionWeight,
+            status: status
+        }
+
+        return meal;
+    }
+
+    return meals.length ? (
+        <table>
+            <thead>
+                <tr>
+                    <th>{language === LANGUAGE.english ? "Name" : "Nazwa"}</th>
+                    <th>{language === LANGUAGE.english ? "Calories" : "Kalorie"}</th>
+                    <th>{language === LANGUAGE.english ? "Protein" : "Białko"}</th>
+                    <th>{language === LANGUAGE.english ? "Carbs" : "Węglowodany"}</th>
+                    <th>{language === LANGUAGE.english ? "Fat" : "Tłuszcze"}</th>
+                    <th>{language === LANGUAGE.english ? "Portion Weight" : "Waga porcji"}</th>
+                    { userRole === USER_ROLE.admin && <th>{language === LANGUAGE.english ? "Actions" : "Działanie"}</th>}
+                </tr>
+            </thead>
+            <tbody>
+                { meals.map(({ id, name, calories, protein, carbs, fat, portionWeight, status }) => (
+                    <tr key={id}>
+                        <td key={name}>{name}</td>
+                        <td key={"calories"}>{calories} kcal</td>
+                        <td key={"protein"}>{protein} g</td>
+                        <td key={"carbs"}>{carbs} g</td>
+                        <td key={"fat"}>{fat} g</td>
+                        <td key={portionWeight}>{portionWeight} g</td>
+                        { (userRole === USER_ROLE.admin || status === STATUS.private) && <td key={status} className="action-group">
+                            <a href="#modal">
+                                <button className="update-btn" onClick={ setUpdateMode.bind(this, name, calories, protein, carbs, fat, portionWeight, id) }>
+                                    <i className="fas fa-pen" title={language === LANGUAGE.english ? "Edit" : "Aktualizuj"}></i>
+                                </button>
+                            </a>
+                            <a href="#modal-delete">
+                                <button className="error-btn" onClick={ selectMeal.bind(this, setMeal(id, name, calories, protein, carbs, fat, portionWeight, status)) }>
+                                    <i className="fas fa-times" title={language === LANGUAGE.english ? "Delete" : "Usuń"}></i>
+                                </button>
+                            </a>
+                        </td>}
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    ) : (
+            <div className="no-content">
+                {language === LANGUAGE.english ?
+                    "No meals found! Add some by clicking the button down below..." : "Nie znaleziono żadnych posiłków! Możesz dodać posiłek za pomocą poniższego przycisku..."}
+            </div>
+        );
+};
+
+MealTable.propTypes = {
+    meals: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number,
+        name: PropTypes.string,
+        calories: PropTypes.number,
+        protein: PropTypes.number,
+        carbs: PropTypes.number,
+        fat: PropTypes.number,
+        portionWeight: PropTypes.number,
+        status: PropTypes.string,
+    }))
+};
+
+MealTable.defaultProps = {
+    meals: [],
+}
+
+export default MealTable;

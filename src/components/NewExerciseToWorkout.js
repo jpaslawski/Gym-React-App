@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import FullPageLoader from "../animatedComponents/FullPageLoader";
 import {withRouter} from "react-router-dom";
+import { LANGUAGE } from "../constants";
 
 class NewExerciseToWorkout extends Component {
     constructor(props) {
@@ -110,7 +111,7 @@ class NewExerciseToWorkout extends Component {
                             <i className="fas fa-dumbbell"></i>
                         </div>
                         <div>
-                            <h5>{language === "EN" ? "Exercise Name" : "Nazwa ćwiczenia"}</h5>
+                            <h5>{language === LANGUAGE.english ? "Exercise Name" : "Nazwa ćwiczenia"}</h5>
                             <input type="text" name="name" onChange={this.onChange} />
                         </div>
                     </div>
@@ -119,7 +120,7 @@ class NewExerciseToWorkout extends Component {
                             <i className="fas fa-info"></i>
                         </div>
                         <div>
-                            <h5>{language === "EN" ? "Additional Info" : "Dodatkowe informacje"}</h5>
+                            <h5>{language === LANGUAGE.english ? "Additional Info" : "Dodatkowe informacje"}</h5>
                             <textarea type="text" name="info" value={info} onChange={this.changeTextarea} ref={ref => this.multilineTextarea = ref} />
                         </div>
                     </div>
@@ -128,7 +129,7 @@ class NewExerciseToWorkout extends Component {
                             <i className="fas fa-project-diagram"></i>
                         </div>
                         <div>
-                            <h5>{language === "EN" ? "Category" : "Kategoria"}</h5>
+                            <h5>{language === LANGUAGE.english ? "Category" : "Kategoria"}</h5>
                             <select name="categoryNew" onChange={this.onChange}>
                                 <option value="null">-</option>
                                 {this.state.categories && this.state.categories.map((item, index) => (
@@ -138,7 +139,7 @@ class NewExerciseToWorkout extends Component {
                         </div>
                     </div>
                     <p className="error-message ">{this.state.errorMessage}</p>
-                    <input type="button" className="btn" value={language === "EN" ? "Create & Add" : "Utwórz & Dodaj"} onClick={this.createExercise} />
+                    <input type="button" className="btn" value={language === LANGUAGE.english ? "Create & Add" : "Utwórz & Dodaj"} onClick={this.createExercise} />
                 </div>
             );
         }

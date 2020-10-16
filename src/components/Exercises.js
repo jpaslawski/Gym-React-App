@@ -3,6 +3,10 @@ import FullPageLoader from "../animatedComponents/FullPageLoader";
 import axios from "axios";
 import Error from "../Error";
 import NewExerciseToWorkout from "./NewExerciseToWorkout";
+import { LANGUAGE, LAYOUT_PREFERENCE } from "../constants";
+import ExerciseTable from "./tables/ExerciseTable";
+import { extractCategory } from "../Helpers";
+import ExerciseCardGroup from "./cardGroup/ExerciseCardGroup";
 
 class Exercises extends Component {
 
@@ -13,7 +17,10 @@ class Exercises extends Component {
             info: "",
             category: "",
             exercises: [],
+            userExercises: [],
+            publicExercises: [],
             displayedExercises: [],
+            selectedItem: "",
             isLoaded: false,
             categories: [],
             checkedCategories: [],
@@ -22,22 +29,17 @@ class Exercises extends Component {
             errorMessage: undefined
         };
 
-        this.onChange = this.onChange.bind(this);
+        this.handleOnChange = this.handleOnChange.bind(this);
         this.onChangeCheckBox = this.onChangeCheckBox.bind(this);
+        this.setUpdateMode = this.setUpdateMode.bind(this);
+        this.selectExercise = this.selectExercise.bind(this);
         this.updateExercise = this.updateExercise.bind(this);
         this.deleteExercise = this.deleteExercise.bind(this);
         this.selectExercise = this.selectExercise.bind(this);
     }
 
-    extractCategory(object) {
-        if (object == null) {
-            return "-";
-        }
-        let json = JSON.stringify(object);
-        return JSON.parse(json).category;
-    }
 
-    onChange(element) {
+    handleOnChange(element) {
         this.setState({
             [element.target.name]: element.target.value
         });
@@ -56,7 +58,7 @@ class Exercises extends Component {
         }
 
         for (let i = 0; i < exercises.length; i++) {
-            if (checkedCategories.includes(this.extractCategory(exercises[i].exerciseCategory))) {
+            if (checkedCategories.includes(extractCategory(exercises[i].exerciseCategory))) {
                 displayedExercises = displayedExercises.concat(exercises[i]);
             }
         }
@@ -90,8 +92,24 @@ class Exercises extends Component {
             name: name,
             info: info,
             category: category,
-            exerciseId: exerciseId
+            exerciseId: exerciseId.toString()
         });
+    }
+
+    setPublicExercises() {
+        this.setState({
+            exercises: this.state.publicExercises,
+            displayedExercises: this.state.publicExercises,
+            selectedItem: "public"
+        })
+    }
+
+    setUserExercises() {
+        this.setState({
+            exercises: this.state.userExercises,
+            displayedExercises: this.state.userExercises,
+            selectedItem: "user"
+        })
     }
 
     selectExercise(exerciseId) {
@@ -108,18 +126,18 @@ class Exercises extends Component {
         }
 
         axios.put("api/exercises/" + this.state.exerciseId, exerciseData)
-        .then(response => {
-            this.setState({
-                errorMessage: ""
+            .then(response => {
+                this.setState({
+                    errorMessage: ""
+                })
+                this.props.history.push("exercises");
+                window.location.reload();
             })
-            this.props.history.push("exercises");
-            window.location.reload();
-        })
-        .catch(error => {
-            this.setState({
-                errorMessage: error.response.statusText
-            })
-        });
+            .catch(error => {
+                this.setState({
+                    errorMessage: error.response.statusText
+                })
+            });
     }
 
     deleteExercise() {
@@ -143,8 +161,28 @@ class Exercises extends Component {
     componentDidMount() {
         axios.get("api/exercises")
             .then(response => this.setState({
+                userExercises: response.data
+            }))
+            .catch(error => {
+                if (!error.response) {
+                    this.setState({
+                        errorStatusCode: 522,
+                        errorMessage: "Connection lost!"
+                    })
+                } else {
+                    this.setState({
+                        errorStatusCode: error.response.status,
+                        errorMessage: error.response.statusText
+                    })
+                }
+            });
+
+        axios.get("api/exercises/public")
+            .then(response => this.setState({
+                publicExercises: response.data,
                 exercises: response.data,
-                displayedExercises: response.data
+                displayedExercises: response.data,
+                selectedItem: "public"
             }))
             .catch(error => {
                 if (!error.response) {
@@ -185,8 +223,10 @@ class Exercises extends Component {
 
     render() {
 
-        let { name, info, category, isLoaded, errorStatusCode, errorMessage } = this.state;
-        let language = sessionStorage.getItem("language");
+        let { name, info, category, displayedExercises, exerciseId, isLoaded, errorStatusCode, errorMessage } = this.state;
+        let { history } = this.props;
+        const language = sessionStorage.getItem("language");
+        const layoutPreference = sessionStorage.getItem("layoutPreference");
 
         if (!isLoaded) {
             return <FullPageLoader />;
@@ -196,49 +236,34 @@ class Exercises extends Component {
             return (
                 <div className="main-content exercise">
                     <div className="pageLabel">
-                        <h1>{language === "EN" ? "Exercises" : "Ćwiczenia"}</h1>
+                        <h1>{language === LANGUAGE.english ? "Exercises" : "Ćwiczenia"}</h1>
+                        <h3 className={this.state.selectedItem === "public" ? "active" : ""} onClick={this.setPublicExercises.bind(this)}>
+                            {language === LANGUAGE.english ? "Shared exercises" : "Ćwiczenia udostępnione"}
+                        </h3>
+                        <h3 className={this.state.selectedItem === "user" ? "active" : ""} onClick={this.setUserExercises.bind(this)}>
+                            {language === LANGUAGE.english ? "My exercises" : "Moje ćwiczenia"}
+                        </h3>
                     </div>
                     <div className="table-with-filter">
                         <div className="table-content">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>{language === "EN" ? "Exercise name" : "Nazwa ćwiczenia"}</th>
-                                        <th>{language === "EN" ? "Additional Information" : "Dodatkowe informacje"}</th>
-                                        <th>{language === "EN" ? "Category" : "Kategoria"}</th>
-                                        <th>{language === "EN" ? "Actions" : "Działania"}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {this.state.displayedExercises && this.state.displayedExercises.map((exercise) => (
-                                        <tr key={exercise.id}>
-                                            <td key={exercise.uniqueId}>{exercise.name}</td>
-                                            <td key={exercise.uniqueId} className="info-column">{exercise.info}</td>
-                                            <td key={exercise.uniqueId}>
-                                                {this.extractCategory(exercise.exerciseCategory)}
-                                            </td>
-                                            <td key={exercise.uniqueId}>
-                                                <button className="details-btn" onClick={this.redirectToDetails.bind(this, exercise.id)}><i className="fas fa-info" title={language === "EN" ? "Details" : "Szczegóły"}></i></button>
-                                                {sessionStorage.getItem('role') === "ROLE_ADMIN" && <a href="#modal-edit">
-                                                    <button className="update-btn" onClick={this.setUpdateMode.bind(this, exercise.name, exercise.info, this.extractCategory(exercise.exerciseCategory), exercise.id)}>
-                                                        <i className="fas fa-pen" title={language === "EN" ? "Edit" : "Aktualizuj"}></i>
-                                                    </button>
-                                                </a>}
-                                                {sessionStorage.getItem('role') === "ROLE_ADMIN" && <a href="#modal-delete">
-                                                    <button className="error-btn" onClick={this.selectExercise.bind(this, exercise.id)}>
-                                                        <i className="fas fa-times" title={language === "EN" ? "Delete" : "Usuń"}></i>
-                                                    </button>
-                                                </a>}
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            { layoutPreference === LAYOUT_PREFERENCE.table ? (
+                                <ExerciseTable 
+                                    exercises={displayedExercises} 
+                                    history={history}
+                                    setUpdateMode={this.setUpdateMode}
+                                    selectExercise={this.selectExercise} />
+                            ) : (
+                                <ExerciseCardGroup
+                                    exercises={displayedExercises} 
+                                    history={history}
+                                    setUpdateMode={this.setUpdateMode}
+                                    selectExercise={this.selectExercise} />
+                            )}
                         </div>
                         <div className="filter">
-                            <div className="filter-title">{language === "EN" ? "Filters" : "Filtry"}</div>
+                            <div className="filter-title">{language === LANGUAGE.english ? "Filters" : "Filtry"}</div>
                             <div className="filter-content">
-                                <h4>{language === "EN" ? "Category:" : "Kategoria:"}</h4>
+                                <h4>{language === LANGUAGE.english ? "Category:" : "Kategoria:"}</h4>
                                 <ul>
                                     {this.state.categories && this.state.categories.map((item, index) => (
                                         <li key={index++}>
@@ -255,7 +280,7 @@ class Exercises extends Component {
                             <button className="add-btn"><i className="fas fa-plus"></i></button>
                         </a>
                         <a href="#filter">
-                            <button className="filter-btn">{language === "EN" ? "Filters" : "Filtry"}</button>
+                            <button className="filter-btn">{language === LANGUAGE.english ? "Filters" : "Filtry"}</button>
                         </a>
                     </div>
                     <div className="modal" id="modal">
@@ -263,7 +288,7 @@ class Exercises extends Component {
                             <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>{language === "EN" ? "New Exercise" : "Nowe ćwiczenie"}</h2>
+                            <h2>{language === LANGUAGE.english ? "New Exercise" : "Nowe ćwiczenie"}</h2>
                             <NewExerciseToWorkout />
                         </div>
                     </div>
@@ -272,14 +297,14 @@ class Exercises extends Component {
                             <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>{language === "EN" ? "Updating exercise details" : "Aktualizacja szczegółów ćwiczenia"}</h2>
+                            <h2>{language === LANGUAGE.english ? "Updating exercise details" : "Aktualizacja szczegółów ćwiczenia"}</h2>
                             <div className={`inputs email ${name ? "focus" : ""}`}>
                                 <div className="i">
                                     <i className="fas fa-dumbbell"></i>
                                 </div>
                                 <div>
-                                    <h5>{language === "EN" ? "Exercise Name" : "Nazwa ćwiczenia"}</h5>
-                                    <input type="text" name="name" onChange={this.onChange} value={name} />
+                                    <h5>{language === LANGUAGE.english ? "Exercise Name" : "Nazwa ćwiczenia"}</h5>
+                                    <input type="text" name="name" onChange={this.handleOnChange} value={name} />
                                 </div>
                             </div>
                             <div className={`inputs email ${(info) ? "focus" : ""}`} style={{ "height": `${this.state.customHeight}px` }}>
@@ -287,7 +312,7 @@ class Exercises extends Component {
                                     <i className="fas fa-info"></i>
                                 </div>
                                 <div>
-                                    <h5>{language === "EN" ? "Additional Info" : "Dodatkowe informacje"}</h5>
+                                    <h5>{language === LANGUAGE.english ? "Additional Info" : "Dodatkowe informacje"}</h5>
                                     <textarea type="text" name="info" value={info} onChange={this.changeTextarea} ref={ref => this.multilineTextarea = ref} />
                                 </div>
                             </div>
@@ -296,8 +321,8 @@ class Exercises extends Component {
                                     <i className="fas fa-project-diagram"></i>
                                 </div>
                                 <div>
-                                    <h5>{language === "EN" ? "Category" : "Kategoria"}</h5>
-                                    <select name="category" onChange={this.onChange} value={category}>
+                                    <h5>{language === LANGUAGE.english ? "Category" : "Kategoria"}</h5>
+                                    <select name="category" onChange={this.handleOnChange} value={category}>
                                         <option value="null">-</option>
                                         {this.state.categories && this.state.categories.map((item, index) => (
                                             <option key={index++}>{item.category}</option>
@@ -306,7 +331,7 @@ class Exercises extends Component {
                                 </div>
                             </div>
                             <p className="error-message ">{this.state.errorMessage}</p>
-                            <input type="button" className="btn" value={language === "EN" ? "Update" : "Zapisz"} onClick={this.updateExercise} />
+                            <input type="button" className="btn" value={language === LANGUAGE.english ? "Update" : "Zapisz"} onClick={this.updateExercise} />
                         </div>
                     </div>
                     <div className="modal" id="modal-delete">
@@ -314,10 +339,12 @@ class Exercises extends Component {
                             <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>{language === "EN" ? "Are you sure that you want to delete exercise" : "Czy napewno chcesz usunąć ćwiczenie"} {this.state.exerciseId}?</h2>
+                            <h2>
+                                { language === LANGUAGE.english ? "Are you sure that you want to delete exercise" : "Czy napewno chcesz usunąć ćwiczenie" } { exerciseId }?
+                            </h2>
                             <p className="error-message ">{this.state.errorMessage}</p>
-                            <input type="button" className="btn" value={language === "EN" ? "Delete" : "Usuń"} onClick={this.deleteExercise} />
-                            <a href="# "><input type="button" className="btn secondary-btn" value={language === "EN" ? "Cancel" : "Anuluj"} /></a>
+                            <input type="button" className="btn" value={language === LANGUAGE.english ? "Delete" : "Usuń"} onClick={this.deleteExercise} />
+                            <a href="# "><input type="button" className="btn secondary-btn" value={language === LANGUAGE.english ? "Cancel" : "Anuluj"} /></a>
                         </div>
                     </div>
                     <div className="modal" id="filter">
@@ -326,7 +353,7 @@ class Exercises extends Component {
                                 <i className=" fas fa-times"></i>
                             </a>
                             <div className="filter-content">
-                                <h4>{language === "EN" ? "Category:" : "Kategoria:"}</h4>
+                                <h4>{language === LANGUAGE.english ? "Category:" : "Kategoria:"}</h4>
                                 <ul>
                                     {this.state.categories && this.state.categories.map((item, index) => (
                                         <li key={index++}>

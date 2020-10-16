@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { USER_ROLE } from "../constants";
 import AdministrationSideMenu from "./AdministrationSideMenu";
 import UserSideMenu from "./UserSideMenu";
 
@@ -22,6 +23,7 @@ class Header extends Component {
 
     render() {
         let { isSideMenuOpen } = this.state;
+        let userRole = sessionStorage.getItem("role");
 
         return (
             <div className="menu">
@@ -30,8 +32,8 @@ class Header extends Component {
                     <h3>Gym App</h3>
                 </div>
                 <div id="side_menu" >
-                    {sessionStorage.getItem('role') && sessionStorage.getItem('role') === "ROLE_ADMIN" && <AdministrationSideMenu /> }
-                    {sessionStorage.getItem('role') && sessionStorage.getItem('role') === "ROLE_USER" && <UserSideMenu /> }
+                    {userRole && userRole === USER_ROLE.admin && <AdministrationSideMenu /> }
+                    {userRole && userRole === USER_ROLE.user && <UserSideMenu /> }
                 </div>
             </div>
         );

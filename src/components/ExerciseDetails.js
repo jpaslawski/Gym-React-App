@@ -4,6 +4,7 @@ import LineChart from "../charts/ExerciseSessionChart";
 import FullPageLoader from "../animatedComponents/FullPageLoader";
 import Error from "../Error";
 import transformDate from "../Helpers";
+import { LANGUAGE } from "../constants";
 
 class ExerciseDetails extends Component {
 
@@ -145,7 +146,7 @@ class ExerciseDetails extends Component {
                                     <i className="fas fa-sort-numeric-up-alt"></i>
                                 </div>
                                 <div>
-                                    <h5>{language === "EN" ? "Reps" : "Powtórzenia"}</h5>
+                                    <h5>{language === LANGUAGE.english ? "Reps" : "Powtórzenia"}</h5>
                                     <input type="number" name="reps" onChange={this.onChange} />
                                 </div>
                             </div>
@@ -154,12 +155,12 @@ class ExerciseDetails extends Component {
                                     <i className="fas fa-weight"></i>
                                 </div>
                                 <div>
-                                    <h5>{language === "EN" ? "Weight" : "Ciężar"}</h5>
+                                    <h5>{language === LANGUAGE.english ? "Weight" : "Ciężar"}</h5>
                                     <input type="number" name="weight" onChange={this.onChange} />
                                 </div>
                             </div>
                         <div className="submit-box">
-                            <button onClick={this.addLog} disabled={this.state.weight && this.state.reps ? "" : "disabled"}>{language === "EN" ? "Add" : "Dodaj"}</button>
+                            <button onClick={this.addLog} disabled={this.state.weight && this.state.reps ? "" : "disabled"}>{language === LANGUAGE.english ? "Add" : "Dodaj"}</button>
                         </div>
                     </div>
                     {logs && logs.map((log, index) => (
@@ -170,8 +171,8 @@ class ExerciseDetails extends Component {
                                 </tr>
                                 <tr key={log.uniqueId}>
                                     <th>#</th>
-                                    <th>{language === "EN" ? "Reps" : "Powtórzenia"}</th>
-                                    <th>{language === "EN" ? "Weight" : "Ciężar"}</th>
+                                    <th>{language === LANGUAGE.english ? "Reps" : "Powtórzenia"}</th>
+                                    <th>{language === LANGUAGE.english ? "Weight" : "Ciężar"}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -186,7 +187,7 @@ class ExerciseDetails extends Component {
                         </table>
                     ))}
                     {logs && itemCount < logs.length && <div id="show-more">
-                        <button onClick={this.incItemLimit}>{language === "EN" ? "Show more" : "Pokaż więcej"}</button>
+                        <button onClick={this.incItemLimit}>{language === LANGUAGE.english ? "Show more" : "Pokaż więcej"}</button>
                     </div> }
                 </div>
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
+import { LANGUAGE } from '../constants';
 
 function LineChart(props) {
     const logs = props.logs;
@@ -19,7 +20,7 @@ function LineChart(props) {
         labels: dates.reverse(),
         datasets: [
             {
-                label: `${language === "EN" ? "Average Weight" : "Średni Ciężar"}`,
+                label: `${language === LANGUAGE.english ? "Average Weight" : "Średni Ciężar"}`,
                 fill: true,
                 backgroundColor: "rgba(21, 1, 123, 0.4)",
                 borderColor: "#16017B",
@@ -41,7 +42,7 @@ function LineChart(props) {
     const options = {
         title: {
             display: true,
-            text: `${language === "EN" ? "Your Progress" : "Twój Progres"}`
+            text: `${language === LANGUAGE.english ? "Your Progress" : "Twój Progres"}`
         },
         scales: {
             xAxes: [{

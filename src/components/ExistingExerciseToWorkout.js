@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { withRouter } from "react-router-dom";
 import FullPageLoader from "../animatedComponents/FullPageLoader";
+import { LANGUAGE } from "../constants";
 
 class ExistingExerciseToWorkout extends Component {
 
@@ -71,13 +72,15 @@ class ExistingExerciseToWorkout extends Component {
         let workoutId = this.props.workoutId;
 
         axios.put("api/exercises/" + exerciseId + "/" + workoutId)
-        .then(this.props.history.push("/workouts/" + workoutId))
-        .then(window.location.reload())
+        .then(response => {
+            console.log(response.data);
+            this.props.history.push("/workouts/" + workoutId);
+            window.location.reload();
+        })
         .catch(error => {
             this.setState({
                 errorMessage: error.response.statusText
             })
-            console.log(error.response.data);
         });
     }
 
@@ -125,7 +128,7 @@ class ExistingExerciseToWorkout extends Component {
                             <i className="fas fa-project-diagram"></i>
                         </div>
                         <div>
-                            <h5>{language === "EN" ? "Category" : "Kategoria"}</h5>
+                            <h5>{language === LANGUAGE.english ? "Category" : "Kategoria"}</h5>
                             <select name="categoryEx" onChange={this.onChangeCategory}>
                                 <option value="null">-</option>
                                 {this.state.categories && this.state.categories.map((item, index) => (
@@ -139,7 +142,7 @@ class ExistingExerciseToWorkout extends Component {
                             <i className="fas fa-dumbbell"></i>
                         </div>
                         <div>
-                            <h5>{language === "EN" ? "Exercise" : "Ćwiczenie"}</h5>
+                            <h5>{language === LANGUAGE.english ? "Exercise" : "Ćwiczenie"}</h5>
                             <select name="exercisesByCategory" onChange={this.onChangeExercise}>
                                 {exercisesByCategory && exercisesByCategory.map((item) => (
                                     <option value={item.id} key={item.uniqueId}>{item.name}</option>
@@ -148,7 +151,7 @@ class ExistingExerciseToWorkout extends Component {
                         </div>
                     </div>
                     <div className={(exercisesByCategory === undefined || exercisesByCategory.length === 0) ? "" : "none"}>
-                        <h5>{language === "EN" ? "No available exercises in this category!" : "Nie znaleziono dostęnych ćwiczeń w tej kategorii!"}</h5>
+                        <h5>{language === LANGUAGE.english ? "No available exercises in this category!" : "Nie znaleziono dostęnych ćwiczeń w tej kategorii!"}</h5>
                     </div>
                     <p className="error-message ">{this.state.errorMessage}</p>
                     { !(exercisesByCategory === undefined || exercisesByCategory.length === 0) && <input type="button"
