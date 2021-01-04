@@ -25,10 +25,10 @@ const MealCardGroup = ({ meals, setUpdateMode, selectMeal }) => {
 
     return meals.length ? (
         <div className="card-container">
-            { meals.map(({ id, name, calories, protein, carbs, fat, portionWeight, status }) => (
+            { meals.map(({ id, name, namePL, calories, protein, carbs, fat, portionWeight, status }) => (
                 <div className="card" key={id}>
                     <div className="card-info">
-                        <h4>{name}</h4>
+                        <h4>{(language === LANGUAGE.polish && namePL !== "") ? namePL : name}</h4>
                         <div className="meal-card-info">
                             <h5>Calories: {calories}g</h5>
                             <h5>Protein: {protein}g</h5>
@@ -48,6 +48,16 @@ const MealCardGroup = ({ meals, setUpdateMode, selectMeal }) => {
                                 {language === LANGUAGE.english ? "Delete" : "Usuń"}
                             </button>
                         </a>
+                        {status === STATUS.private && <a href="#modal-share">
+                            <button className="share-btn" onClick={ selectMeal.bind(this, setMeal(id, name, calories, protein, carbs, fat, portionWeight, status)) }>
+                                {language === LANGUAGE.english ? "Share" : "Udostępnij"}
+                            </button>
+                        </a>}
+                        {status === STATUS.pending && <a href="#modal-manage">
+                            <button className="share-btn" onClick={ selectMeal.bind(this, setMeal(id, name, calories, protein, carbs, fat, portionWeight, status)) }>
+                                {language === LANGUAGE.english ? "Manage" : "Rozpatrz"}
+                            </button>
+                        </a>}
                     </div>}
                 </div>
             ))}

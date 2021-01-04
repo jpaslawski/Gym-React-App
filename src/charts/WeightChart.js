@@ -4,9 +4,7 @@ import { LANGUAGE } from '../constants';
 
 function WeightChart(props) {
     const logs = props.logs;
-    let dates = [];
-    let weight = [];
-
+    let dates = [], weight = [];
     let language = sessionStorage.getItem("language");
 
     logs && logs.forEach(function(log) {

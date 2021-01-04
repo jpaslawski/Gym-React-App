@@ -10,30 +10,42 @@ class NewExerciseToWorkout extends Component {
 
         this.state = {
             name: undefined,
-            info: undefined,
+            namePL: "",
+            info: "",
+            infoPL: "",
             categoryNew: undefined,
             errorMessage: undefined,
             categories: [],
             createOrUpdate: undefined,
-            customHeight: undefined,
+            infoHeight: undefined,
+            infoPLHeight: undefined,
             isLoaded: false
         };
 
         this.createExercise = this.createExercise.bind(this);
-        this.onChange = this.onChange.bind(this);
+        this.handleOnChange = this.handleOnChange.bind(this);
     }
 
-    onChange(element) {
+    handleOnChange(element) {
         this.setState({
             [element.target.name]: element.target.value
         });
     }
 
     createExercise() {
+        let exerciseCategory = this.state.categoryNew;
+        if(sessionStorage.getItem("language") === LANGUAGE.polish) {
+            let element = this.state.categories.find(c => {
+                return c.categoryPL === this.state.categoryNew;
+            })
+            exerciseCategory = element.category;
+        }
         const exerciseData = {
             name: this.state.name,
+            namePL: this.state.namePL,
             info: this.state.info,
-            category: this.state.categoryNew
+            infoPL: this.state.infoPL,
+            category: exerciseCategory
         }
         if (this.props.workoutId) {
             axios.post("api/exercises/" + this.props.workoutId, exerciseData)
@@ -58,13 +70,22 @@ class NewExerciseToWorkout extends Component {
         }
     }
 
-    changeTextarea = (element) => {
+    handleOnChangeTextarea1 = (element) => {
         this.setState({
             [element.target.name]: element.target.value,
-            customHeight: this.multilineTextarea.scrollHeight
+            infoHeight: this.multilineTextarea1.scrollHeight
         });
-        this.multilineTextarea.style.height = 'auto';
-        this.multilineTextarea.style.height = this.multilineTextarea.scrollHeight + 'px';
+        this.multilineTextarea1.style.height = 'auto';
+        this.multilineTextarea1.style.height = this.multilineTextarea1.scrollHeight + 'px';
+    }
+
+    handleOnChangeTextarea2 = (element) => {
+        this.setState({
+            [element.target.name]: element.target.value,
+            infoPLHeight: this.multilineTextarea2.scrollHeight
+        });
+        this.multilineTextarea2.style.height = 'auto';
+        this.multilineTextarea2.style.height = this.multilineTextarea2.scrollHeight + 'px';
     }
 
     componentDidMount() {
@@ -98,7 +119,7 @@ class NewExerciseToWorkout extends Component {
     }
 
     render() {
-        let { name, info, isLoaded } = this.state;
+        let { name, namePL, info, infoPL, isLoaded } = this.state;
         let language = sessionStorage.getItem("language");
 
         if (!isLoaded) {
@@ -111,17 +132,35 @@ class NewExerciseToWorkout extends Component {
                             <i className="fas fa-dumbbell"></i>
                         </div>
                         <div>
-                            <h5>{language === LANGUAGE.english ? "Exercise Name" : "Nazwa ćwiczenia"}</h5>
-                            <input type="text" name="name" onChange={this.onChange} />
+                            <h5>{language === LANGUAGE.english ? "Exercise Name" : "Nazwa ćwiczenia"} (EN)</h5>
+                            <input type="text" name="name" onChange={this.handleOnChange} />
                         </div>
                     </div>
-                    <div className={`inputs email ${(info) ? "focus" : ""}`} style={{"height": `${this.state.customHeight}px`}}>
+                    <div className={`inputs email ${namePL ? "focus" : ""}`}>
+                        <div className="i">
+                            <i className="fas fa-dumbbell"></i>
+                        </div>
+                        <div>
+                            <h5>{language === LANGUAGE.english ? "Exercise Name" : "Nazwa ćwiczenia"} (PL)</h5>
+                            <input type="text" name="namePL" onChange={this.handleOnChange} />
+                        </div>
+                    </div>
+                    <div className={`inputs email ${(info) ? "focus" : ""}`} style={{"height": `${this.state.infoHeight}px`}}>
                         <div className="i">
                             <i className="fas fa-info"></i>
                         </div>
                         <div>
-                            <h5>{language === LANGUAGE.english ? "Additional Info" : "Dodatkowe informacje"}</h5>
-                            <textarea type="text" name="info" value={info} onChange={this.changeTextarea} ref={ref => this.multilineTextarea = ref} />
+                            <h5>{language === LANGUAGE.english ? "Additional Info" : "Dodatkowe informacje"} (EN)</h5>
+                            <textarea type="text" name="info" value={info} onChange={this.handleOnChangeTextarea1} ref={ref => this.multilineTextarea1 = ref} />
+                        </div>
+                    </div>
+                    <div className={`inputs email ${(infoPL) ? "focus" : ""}`} style={{"height": `${this.state.infoPLHeight}px`}}>
+                        <div className="i">
+                            <i className="fas fa-info"></i>
+                        </div>
+                        <div>
+                            <h5>{language === LANGUAGE.english ? "Additional Info" : "Dodatkowe informacje"} (PL)</h5>
+                            <textarea type="text" name="infoPL" value={infoPL} onChange={this.handleOnChangeTextarea2} ref={ref => this.multilineTextarea2 = ref} />
                         </div>
                     </div>
                     <div className="inputs email focus">
@@ -130,16 +169,22 @@ class NewExerciseToWorkout extends Component {
                         </div>
                         <div>
                             <h5>{language === LANGUAGE.english ? "Category" : "Kategoria"}</h5>
-                            <select name="categoryNew" onChange={this.onChange}>
+                            <select name="categoryNew" onChange={this.handleOnChange}>
                                 <option value="null">-</option>
-                                {this.state.categories && this.state.categories.map((item, index) => (
-                                    <option key={index++}>{item.category}</option>
+                                {this.state.categories && this.state.categories.map(({category, categoryPL}) => (
+                                    <option key={category}>{language === LANGUAGE.polish ? categoryPL : category}</option>
                                 ))}
                             </select>
                         </div>
                     </div>
                     <p className="error-message ">{this.state.errorMessage}</p>
-                    <input type="button" className="btn" value={language === LANGUAGE.english ? "Create & Add" : "Utwórz & Dodaj"} onClick={this.createExercise} />
+                    <input  type="button" 
+                            className="btn primary-btn" 
+                            value={this.props.workoutId !== undefined ? 
+                                language === LANGUAGE.english ? "Create & Add" : "Utwórz & Dodaj"
+                                    :
+                                language === LANGUAGE.english ? "Create" : "Utwórz"} 
+                            onClick={this.createExercise} />
                 </div>
             );
         }

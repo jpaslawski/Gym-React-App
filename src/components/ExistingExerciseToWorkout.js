@@ -19,12 +19,12 @@ class ExistingExerciseToWorkout extends Component {
         };
 
         this.addExercise = this.addExercise.bind(this);
-        this.onChangeCategory = this.onChangeCategory.bind(this);
-        this.onChangeExercise = this.onChangeExercise.bind(this);
+        this.handleOnChangeCategory = this.handleOnChangeCategory.bind(this);
+        this.handleOnChangeExercise = this.handleOnChangeExercise.bind(this);
     }
 
 
-    onChangeCategory(element) {
+    handleOnChangeCategory(element) {
         if (element.target.value !== "null") {
             axios.get("api/exercises?category=" + element.target.value)
             .then(response => {
@@ -56,7 +56,7 @@ class ExistingExerciseToWorkout extends Component {
         }
     }
 
-    onChangeExercise(element) {
+    handleOnChangeExercise(element) {
         let findExercise = this.state.exercisesByCategory.filter(item => {
             return parseInt(item.id, 10) === parseInt(element.target.value, 10);
         })
@@ -129,10 +129,10 @@ class ExistingExerciseToWorkout extends Component {
                         </div>
                         <div>
                             <h5>{language === LANGUAGE.english ? "Category" : "Kategoria"}</h5>
-                            <select name="categoryEx" onChange={this.onChangeCategory}>
+                            <select name="categoryEx" onChange={this.handleOnChangeCategory}>
                                 <option value="null">-</option>
-                                {this.state.categories && this.state.categories.map((item, index) => (
-                                    <option key={index++}>{item.category}</option>
+                                {this.state.categories && this.state.categories.map(({category, categoryPL}) => (
+                                    <option value={category} key={category}>{language === LANGUAGE.polish ? categoryPL : category}</option>
                                 ))}
                             </select>
                         </div>
@@ -143,9 +143,9 @@ class ExistingExerciseToWorkout extends Component {
                         </div>
                         <div>
                             <h5>{language === LANGUAGE.english ? "Exercise" : "Ćwiczenie"}</h5>
-                            <select name="exercisesByCategory" onChange={this.onChangeExercise}>
-                                {exercisesByCategory && exercisesByCategory.map((item) => (
-                                    <option value={item.id} key={item.uniqueId}>{item.name}</option>
+                            <select name="exercisesByCategory" onChange={this.handleOnChangeExercise}>
+                                {exercisesByCategory && exercisesByCategory.map(({id, name, namePL}) => (
+                                    <option value={id} key={name}>{(language === LANGUAGE.polish && namePL !== "") ? namePL : name}</option>
                                 ))}
                             </select>
                         </div>
@@ -155,7 +155,7 @@ class ExistingExerciseToWorkout extends Component {
                     </div>
                     <p className="error-message ">{this.state.errorMessage}</p>
                     { !(exercisesByCategory === undefined || exercisesByCategory.length === 0) && <input type="button"
-                    className={(exercisesByCategory === undefined || exercisesByCategory.length === 0) ? "none" : "btn"} value="Add" onClick={this.addExercise} /> }
+                    className={(exercisesByCategory === undefined || exercisesByCategory.length === 0) ? "none" : "btn primary-btn"} value="Add" onClick={this.addExercise} /> }
                 </div>
             );
         }

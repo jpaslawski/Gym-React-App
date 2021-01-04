@@ -4,7 +4,7 @@ import './index.css';
 import './animations.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { Route, BrowserRouter as Router, Switch} from "react-router-dom";
+import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import Users from "./components/Users";
 import Exercises from "./components/Exercises";
 import Diet from "./components/Diet";

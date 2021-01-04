@@ -16,12 +16,12 @@ const ExerciseCardGroup = ({ exercises, history, setUpdateMode, selectExercise }
 
     return exercises.length ? (
         <div className="card-container">
-            { exercises.map(({ id, name, info, exerciseCategory, status }) => (
+            { exercises.map(({ id, name, namePL, info, infoPL, exerciseCategory, status }) => (
                 <div className="card" key={id}>
                     <div className="card-info">
                         <h4 className="category">{extractCategory(exerciseCategory)}</h4>
-                        <h4>{name}</h4>
-                        <h5>{info}</h5>
+                        <h4>{(language === LANGUAGE.polish && namePL !== "") ? namePL : name}</h4>
+                        <h5>{(language === LANGUAGE.polish && infoPL !== "") ? infoPL : info}</h5>
                     </div>
                     <div className="card-buttons">
                         <button className="details-btn" onClick={ redirectToExerciseDetails.bind(this, id) }>
@@ -35,6 +35,16 @@ const ExerciseCardGroup = ({ exercises, history, setUpdateMode, selectExercise }
                         {(userRole === USER_ROLE.admin || status === STATUS.private) && <a href="#modal-delete">
                             <button className="error-btn" onClick={ selectExercise.bind(this, id) }>
                                 {language === LANGUAGE.english ? "Delete" : "Usuń"}
+                            </button>
+                        </a>}
+                        { status === STATUS.private && <a href="#modal-share">
+                            <button className="share-btn" onClick={ selectExercise.bind(this, id) }>
+                                {language === LANGUAGE.english ? "Share" : "Udostępnij"}
+                            </button>
+                        </a>}
+                        {(userRole === USER_ROLE.admin && status === STATUS.pending) && <a href="#modal-manage">
+                            <button className="share-btn" onClick={ selectExercise.bind(this, id) }>
+                                {language === LANGUAGE.english ? "Manage" : "Rozpatrz"}
                             </button>
                         </a>}
                     </div>

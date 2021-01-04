@@ -4,6 +4,7 @@ import axios from "axios";
 import Error from "../Error";
 import transformDate from "../Helpers";
 import { LANGUAGE } from "../constants";
+import { Redirect } from "react-router";
 
 class Diet extends Component {
 
@@ -19,22 +20,23 @@ class Diet extends Component {
             mealToAdd: {},
             portionCount: 1,
             itemCount: 6,
+            redirect: false,
             isLoaded: false,
             errorStatusCode: undefined,
             errorMessage: undefined
         };
 
-        this.onChange = this.onChange.bind(this);
-        this.onChangePortionCount = this.onChangePortionCount.bind(this);
+        this.handleOnChange = this.handleOnChange.bind(this);
+        this.handleOnChangePortionCount = this.handleOnChangePortionCount.bind(this);
         this.addMealLog = this.addMealLog.bind(this);
         this.incLogSetIndex = this.incLogSetIndex.bind(this);
         this.decLogSetIndex = this.decLogSetIndex.bind(this);
         this.incItemLimit = this.incItemLimit.bind(this);
     }
 
-    onChange(element) {
+    handleOnChange(element) {
         let newArray = [];
-        if(element.target.name === "mealName" && element.target.value !== "") {
+        if (element.target.name === "mealName" && element.target.value !== "") {
             newArray = this.state.meals.filter(meal => {
                 return meal.name.toLowerCase().includes(element.target.value.toLowerCase())
             })
@@ -48,15 +50,17 @@ class Diet extends Component {
         });
     }
 
-    onChangePortionCount(element) {
+    handleOnChangePortionCount(element) {
         this.setState({
             [element.target.name]: element.target.value
         });
     }
 
-    setMeal(index) {
+    setMeal(id) {
         this.setState({
-            mealToAdd: this.state.meals[index]
+            mealToAdd: this.state.meals.find(meal => {
+                return meal.id === id;
+            })
         })
     }
 
@@ -112,34 +116,39 @@ class Diet extends Component {
                 })
             });
     }
-    
+
 
     componentDidMount() {
-        axios.get("api/meals")
-            .then(response => this.setState({
-                meals: response.data,
-                mealsToDisplay: response.data,
-                isLoaded: true
-            }))
-            .catch(error => {
-                if (!error.response) {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: 522,
-                        errorMessage: "Connection lost!"
-                    })
-                } else {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: error.response.status,
-                        errorMessage: error.response.statusText
-                    })
-                }
-            });
+        if (!sessionStorage.getItem('token')) {
+            this.setState({
+                redirect: true
+            })
+        } else {
+            axios.get("api/meals/available")
+                .then(response => this.setState({
+                    meals: response.data,
+                    mealsToDisplay: response.data,
+                    isLoaded: true
+                }))
+                .catch(error => {
+                    if (!error.response) {
+                        this.setState({
+                            isLoaded: true,
+                            errorStatusCode: 522,
+                            errorMessage: "Connection lost!"
+                        })
+                    } else {
+                        this.setState({
+                            isLoaded: true,
+                            errorStatusCode: error.response.status,
+                            errorMessage: error.response.statusText
+                        })
+                    }
+                });
 
-        axios.get("api/mealLog/all")
-            .then(response => {
-                    if(response.data !== "") {
+            axios.get("api/mealLog/all")
+                .then(response => {
+                    if (response.data !== "") {
                         this.setState({
                             mealLogsSet: response.data,
                             currentLogsSet: response.data[0],
@@ -148,38 +157,39 @@ class Diet extends Component {
                         });
                     }
                 })
-            .catch(error => {
-                if (!error.response) {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: 522,
-                        errorMessage: "Connection lost!"
-                    })
-                } else {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: error.response.status,
-                        errorMessage: error.response.statusText
-                    })
-                }
-            });
+                .catch(error => {
+                    if (!error.response) {
+                        this.setState({
+                            isLoaded: true,
+                            errorStatusCode: 522,
+                            errorMessage: "Connection lost!"
+                        })
+                    } else {
+                        this.setState({
+                            isLoaded: true,
+                            errorStatusCode: error.response.status,
+                            errorMessage: error.response.statusText
+                        })
+                    }
+                });
+        }
     }
 
     render() {
-        let { mealsToDisplay, currentLogsSet, itemCount, isLoaded, errorStatusCode, errorMessage } = this.state;
+        let { mealToAdd, mealsToDisplay, currentLogsSet, itemCount, isLoaded, errorStatusCode, errorMessage } = this.state;
         let language = sessionStorage.getItem("language");
 
         let tableOfLogs = <table className="diet">
             <thead>
                 <tr>
                     <th className="light-blue" colSpan="1">
-                        { this.state.mealLogsSet.length > 1 && 
-                            <button className="handleLogSet" onClick={this.decLogSetIndex} style={{"float":"right", "background": "transparent"}}><i className="fas fa-arrow-left"></i></button> }
+                        {this.state.mealLogsSet.length > 1 &&
+                            <button className="handleLogSet" onClick={this.decLogSetIndex} style={{ "float": "right", "background": "transparent" }}><i className="fas fa-arrow-left"></i></button>}
                     </th>
-                    { currentLogsSet.date && <th className="light-blue" colSpan="3">{transformDate(currentLogsSet.date)}</th>}
+                    {currentLogsSet.date && <th className="light-blue" colSpan="3">{transformDate(currentLogsSet.date, language)}</th>}
                     <th className="light-blue" colSpan="1">
-                        { this.state.mealLogsSet.length > 1 && 
-                            <button className="handleLogSet" onClick={this.incLogSetIndex}style={{"float":"left", "background": "transparent"}}><i className="fas fa-arrow-right"></i></button> }
+                        {this.state.mealLogsSet.length > 1 &&
+                            <button className="handleLogSet" onClick={this.incLogSetIndex} style={{ "float": "left", "background": "transparent" }}><i className="fas fa-arrow-right"></i></button>}
                     </th>
                 </tr>
                 <tr>
@@ -191,15 +201,15 @@ class Diet extends Component {
                 </tr>
             </thead>
             <tbody>
-                { currentLogsSet.mealLogs && currentLogsSet.mealLogs.map((log, index, i) => (
-                    <tr key={log.id}>
-                        <td key={++index}>{log.referredMeal.name}</td>
-                        <td key={++index}>{(log.referredMeal.calories * log.portionCount).toFixed(2)} kcal</td>
-                        <td key={++index}>{(log.referredMeal.protein * log.portionCount).toFixed(2)} g</td>
-                        <td key={++index}>{(log.referredMeal.carbs * log.portionCount).toFixed(2)} g</td>
-                        <td key={++index}>{(log.referredMeal.fat * log.portionCount).toFixed(2)} g</td>
+                {currentLogsSet.mealLogs && currentLogsSet.mealLogs.map(({ id, referredMeal, portionCount }) => (
+                    <tr key={id}>
+                        <td key={referredMeal.name}>{(language === LANGUAGE.polish && referredMeal.namePL !== "") ? referredMeal.namePL : referredMeal.name}</td>
+                        <td key={referredMeal.calories}>{(referredMeal.calories * portionCount).toFixed(2)} kcal</td>
+                        <td key={referredMeal.protein}>{(referredMeal.protein * portionCount).toFixed(2)} g</td>
+                        <td key={referredMeal.carbs}>{(referredMeal.carbs * portionCount).toFixed(2)} g</td>
+                        <td key={referredMeal.fat}>{(referredMeal.fat * portionCount).toFixed(2)} g</td>
                     </tr>))}
-                { currentLogsSet && <tr className="summary-row">
+                {currentLogsSet && <tr className="summary-row">
                     <td>{language === LANGUAGE.english ? "Sum" : "Suma"}</td>
                     <td>{parseFloat(currentLogsSet.caloriesSum).toFixed(2)} kcal</td>
                     <td>{parseFloat(currentLogsSet.proteinSum).toFixed(2)} g</td>
@@ -209,7 +219,9 @@ class Diet extends Component {
             </tbody>
         </table>
 
-        if (!isLoaded) {
+        if (this.state.redirect) {
+            return (<Redirect to='/sign-in' />);
+        } else if (!isLoaded) {
             return <FullPageLoader />;
         } else if (errorStatusCode) {
             return <Error errorCode={errorStatusCode} errorInfo={errorMessage} errorEnd={"Try again later!"} />;
@@ -218,16 +230,16 @@ class Diet extends Component {
                 <div className="main-content">
                     <div className="pageLabel">
                         <h1>{language === LANGUAGE.english ? "Diet" : "Dieta"}</h1>
-                        <input name="mealName" placeholder={language === LANGUAGE.english ? "Find your meal..." : "Znajdź posiłek..."} onChange={this.onChange} />
+                        <input name="mealName" placeholder={language === LANGUAGE.english ? "Find your meal..." : "Znajdź posiłek..."} onChange={this.handleOnChange} />
                     </div>
                     <section>
                         <h3>{language === LANGUAGE.english ? "Choose the meal you want to include in your daily diet:" : "Wybierz posiłek, który chcesz dodać do dziennego bilansu:"}</h3>
                         <div className="meal-container">
-                            {mealsToDisplay && mealsToDisplay.map((meal, index) => (
+                            {mealsToDisplay && mealsToDisplay.map(({ id, name, namePL }, index) => (
                                 index < itemCount &&
-                                <div className="meal-card" key={meal.id}>
-                                    <h6 >{meal.name}</h6>
-                                    <a href="#modal"><button onClick={this.setMeal.bind(this, index)}>
+                                <div className="meal-card" key={id}>
+                                    <h6>{(language === LANGUAGE.polish && namePL !== "") ? namePL : name}</h6>
+                                    <a href="#modal"><button onClick={this.setMeal.bind(this, id)}>
                                         <i className="fas fa-plus"></i>
                                     </button></a>
                                 </div>
@@ -235,15 +247,15 @@ class Diet extends Component {
                         </div>
                         {itemCount < mealsToDisplay.length && <div id="show-more">
                             <button onClick={this.incItemLimit}>{language === LANGUAGE.english ? "Show more" : "Pokaż więcej"}</button>
-                            </div> }
+                        </div>}
                     </section>
-                    { Object.keys(currentLogsSet).length !== 0 ? tableOfLogs : <div className="no-content">{language === LANGUAGE.english ? "No meal logs found!" : "Nie znaleziono zapisów z poprzednich dni!"}</div> }
+                    { Object.keys(currentLogsSet).length !== 0 ? tableOfLogs : <div className="no-content">{language === LANGUAGE.english ? "No meal logs found!" : "Nie znaleziono zapisów z poprzednich dni!"}</div>}
                     <div className="modal" id="modal">
                         <div className="modal-container">
                             <a href="# ">
                                 <i className=" fas fa-times"></i>
                             </a>
-                            <h2>{language === LANGUAGE.english ? "Adding" : "Dodawanie"} "{this.state.mealToAdd.name}" {language === LANGUAGE.english ? "to your daily balance" : "do twojego dziennego bilansu"}</h2>
+                            <h2>{language === LANGUAGE.english ? "Adding" : "Dodawanie"} "{(language === LANGUAGE.polish && mealToAdd.namePL !== "") ? mealToAdd.namePL : mealToAdd.name}" {language === LANGUAGE.english ? "to your daily balance" : "do twojego dziennego bilansu"}</h2>
                             <div className="macro-summary">
                                 <div className="macro-name">{language === LANGUAGE.english ? "Calories" : "Kalorie"}:</div>
                                 <div className="macro-value">{(this.state.mealToAdd.calories * this.state.portionCount).toFixed(2)} kcal</div>
@@ -256,11 +268,11 @@ class Diet extends Component {
                                 <div className="macro-name" style={{ marginTop: "4px" }}>{language === LANGUAGE.english ? "Portion" : "Porcja"}:</div>
                                 <div className="macro-portion">
                                     <div className="macro-value">{this.state.mealToAdd.portionWeight} g x</div>
-                                    <input type="number" name="portionCount" min="0.5" step="0.5" value={this.state.portionCount} onChange={this.onChangePortionCount} />
+                                    <input type="number" name="portionCount" min="0.5" step="0.5" value={this.state.portionCount} onChange={this.handleOnChangePortionCount} />
                                 </div>
                             </div>
                             <p className="error-message ">{this.state.errorMessage}</p>
-                            <input type="button" value={language === LANGUAGE.english ? "Submit" : "Zapisz"} onClick={this.addMealLog} disabled={this.portionCount > 0} />
+                            <input type="button" className="btn primary-btn" value={language === LANGUAGE.english ? "Submit" : "Zapisz"} onClick={this.addMealLog} disabled={this.portionCount > 0} />
                             <a href="# ">
                                 <button className="secondary-btn">{language === LANGUAGE.english ? "Cancel" : "Anuluj"}</button>
                             </a>

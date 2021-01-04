@@ -24,23 +24,33 @@ const WorkoutTable = ({ workouts, setUpdateMode, selectWorkout, history }) => {
                 </tr>
             </thead>
             <tbody>
-                {workouts && workouts.map(({ id, name, info, exerciseAmount, status }) => (
+                {workouts && workouts.map(({ id, name, namePL, info, infoPL, exerciseAmount, status }) => (
                     <tr key={id}>
-                        <td key={name}>{name}</td>
-                        <td key={info}>{info}</td>
+                        <td key={name}>{(language === LANGUAGE.polish && namePL !== "") ? namePL : name}</td>
+                        <td key={info}>{(language === LANGUAGE.polish && infoPL !== "") ? infoPL : info}</td>
                         <td key={exerciseAmount}>{exerciseAmount}</td>
                         <td key={status} className="action-group">
                             <button className="details-btn" onClick={ redirectToWorkoutDetails.bind(this, id) }>
                                 <i className="fas fa-info" title={language === LANGUAGE.english ? "Details" : "Szczegóły"}></i>
                             </button>
                             {(userRole === USER_ROLE.admin || status === STATUS.private) && <a href="#modal">
-                                <button className="update-btn" onClick={ setUpdateMode.bind(this, name, info, id) }>
+                                <button className="update-btn" onClick={ setUpdateMode.bind(this, id) }>
                                     <i className="fas fa-pen" title={language === LANGUAGE.english ? "Edit" : "Aktualizuj"}></i>
                                 </button>
                             </a>}
                             {(userRole === USER_ROLE.admin || status === STATUS.private) && <a href="#modal-delete">
                                 <button className="error-btn" onClick={ selectWorkout.bind(this, id) }>
                                     <i className="fas fa-times" title={language === LANGUAGE.english ? "Delete" : "Usuń"}></i>
+                                </button>
+                            </a>}
+                            { status === STATUS.private && <a href="#modal-share">
+                                <button className="share-btn" onClick={ selectWorkout.bind(this, id) }>
+                                    <i className="fas fa-share-square" title={language === LANGUAGE.english ? "Share" : "Udostępnij"}></i>
+                                </button>
+                            </a>}
+                            {(userRole === USER_ROLE.admin && status === STATUS.pending) && <a href="#modal-manage">
+                                <button className="share-btn" onClick={ selectWorkout.bind(this, id) }>
+                                    <i className="fas fa-hand-pointer" title={language === LANGUAGE.english ? "Manage" : "Rozpatrz"}></i>
                                 </button>
                             </a>}
                         </td>

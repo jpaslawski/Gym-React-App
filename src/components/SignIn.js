@@ -15,7 +15,7 @@ class SignIn extends Component {
         }
 
         this.signIn = this.signIn.bind(this);
-        this.onChange = this.onChange.bind(this);
+        this.handleOnChange = this.handleOnChange.bind(this);
     }
 
     componentDidMount() {
@@ -34,6 +34,9 @@ class SignIn extends Component {
             axios.post("api/authenticate", credentials)
                 .then(response => {
                     sessionStorage.setItem("token", response.data.token);
+                    sessionStorage.setItem("language", response.data.preferredLanguage);
+                    sessionStorage.setItem("layoutPreference", response.data.preferredLayout);
+                    
                     let jwtData = response.data.token.split('.')[1];
                     let decodedJwtJsonData = window.atob(jwtData);
                     let decodedJwtData = JSON.parse(decodedJwtJsonData);
@@ -60,7 +63,7 @@ class SignIn extends Component {
         }
     }
 
-    onChange(element) {
+    handleOnChange(element) {
         this.setState({
             [element.target.name]: element.target.value
         });
@@ -83,7 +86,7 @@ class SignIn extends Component {
                             </div>
                             <div>
                                 <h5>Email</h5>
-                                <input type="text" name="email" onChange={this.onChange} />
+                                <input type="text" name="email" onChange={this.handleOnChange} />
                             </div>
                         </div>
                         <div className={`inputs pass ${password ? "focus" : ""}`}>
@@ -92,12 +95,12 @@ class SignIn extends Component {
                             </div>
                             <div>
                                 <h5>{language === LANGUAGE.english ? "Password" : "Hasło"}</h5>
-                                <input type="password" name="password" onChange={this.onChange} />
+                                <input type="password" name="password" onChange={this.handleOnChange} />
                             </div>
                         </div>
-                        <a href="/">{language === LANGUAGE.english ? "Forgot your password?" : "Zapomniałeś hasło?"}</a>
+                        {/*<a href="/">{language === LANGUAGE.english ? "Forgot your password?" : "Zapomniałeś hasło?"}</a>*/}
                         <p className="error-message ">{errorMessage}</p>
-                        <input type="button" className="btn" value={language === LANGUAGE.english ? "Sign In" : "Zaloguj się"} onClick={this.signIn} />
+                        <input type="button" className="btn primary-btn" value={language === LANGUAGE.english ? "Sign In" : "Zaloguj się"} onClick={this.signIn} />
                         <p>{language === LANGUAGE.english ? "You don't have an account?" : "Nie masz jeszcze konta?"} <a href="/sign-up">{language === LANGUAGE.english ? "Sign Up!" : "Załóż teraz!"}</a></p>
                     </form>
                 </div>

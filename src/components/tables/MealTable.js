@@ -3,15 +3,16 @@ import PropTypes from 'prop-types';
 
 const { LANGUAGE, STATUS, USER_ROLE } = require("../../constants");
 
-const MealTable = ({ meals, setUpdateMode, selectMeal }) => {
+const MealTable = ({ meals, selectedItem, setUpdateMode, selectMeal }) => {
 
     let language = sessionStorage.getItem("language");
     let userRole = sessionStorage.getItem("role");
 
-    const setMeal = (id, name, calories, protein, carbs, fat, portionWeight, status) => {
+    const setMeal = (id, name, namePL, calories, protein, carbs, fat, portionWeight, status) => {
         const meal = {
             id: id,
             name: name,
+            namePL: namePL,
             calories: calories,
             protein: protein,
             carbs: carbs,
@@ -33,13 +34,13 @@ const MealTable = ({ meals, setUpdateMode, selectMeal }) => {
                     <th>{language === LANGUAGE.english ? "Carbs" : "Węglowodany"}</th>
                     <th>{language === LANGUAGE.english ? "Fat" : "Tłuszcze"}</th>
                     <th>{language === LANGUAGE.english ? "Portion Weight" : "Waga porcji"}</th>
-                    { userRole === USER_ROLE.admin && <th>{language === LANGUAGE.english ? "Actions" : "Działanie"}</th>}
+                    { (userRole === USER_ROLE.admin || (selectedItem === "user" && meals)) && <th>{language === LANGUAGE.english ? "Actions" : "Działanie"}</th>}
                 </tr>
             </thead>
             <tbody>
-                { meals.map(({ id, name, calories, protein, carbs, fat, portionWeight, status }) => (
+                { meals.map(({ id, name, namePL, calories, protein, carbs, fat, portionWeight, status }) => (
                     <tr key={id}>
-                        <td key={name}>{name}</td>
+                        <td key={name}>{(language === LANGUAGE.polish && namePL !== "") ? namePL : name}</td>
                         <td key={"calories"}>{calories} kcal</td>
                         <td key={"protein"}>{protein} g</td>
                         <td key={"carbs"}>{carbs} g</td>
@@ -47,7 +48,7 @@ const MealTable = ({ meals, setUpdateMode, selectMeal }) => {
                         <td key={portionWeight}>{portionWeight} g</td>
                         { (userRole === USER_ROLE.admin || status === STATUS.private) && <td key={status} className="action-group">
                             <a href="#modal">
-                                <button className="update-btn" onClick={ setUpdateMode.bind(this, name, calories, protein, carbs, fat, portionWeight, id) }>
+                                <button className="update-btn" onClick={ setUpdateMode.bind(this, name, namePL, calories, protein, carbs, fat, portionWeight, id) }>
                                     <i className="fas fa-pen" title={language === LANGUAGE.english ? "Edit" : "Aktualizuj"}></i>
                                 </button>
                             </a>
@@ -56,6 +57,16 @@ const MealTable = ({ meals, setUpdateMode, selectMeal }) => {
                                     <i className="fas fa-times" title={language === LANGUAGE.english ? "Delete" : "Usuń"}></i>
                                 </button>
                             </a>
+                            {status === STATUS.private && <a href="#modal-share">
+                                <button className="share-btn" onClick={ selectMeal.bind(this, setMeal(id, name, calories, protein, carbs, fat, portionWeight, status)) }>
+                                    <i className="fas fa-share" title={language === LANGUAGE.english ? "Share" : "Udostępnij"}></i>
+                                </button>
+                            </a>}
+                            {status === STATUS.pending && <a href="#modal-manage">
+                                <button className="share-btn" onClick={ selectMeal.bind(this, setMeal(id, name, calories, protein, carbs, fat, portionWeight, status)) }>
+                                    <i className="fas fa-hand-pointer" title={language === LANGUAGE.english ? "Manage" : "Rozpatrz"}></i>
+                                </button>
+                            </a>}
                         </td>}
                     </tr>
                 ))}

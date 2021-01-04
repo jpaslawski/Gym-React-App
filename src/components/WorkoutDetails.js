@@ -4,7 +4,8 @@ import FullPageLoader from "../animatedComponents/FullPageLoader";
 import Error from "../Error";
 import NewExerciseToWorkout from "./NewExerciseToWorkout";
 import ExistingExerciseToWorkout from "./ExistingExerciseToWorkout";
-import { LANGUAGE } from "../constants";
+import { LANGUAGE, STATUS, USER_ROLE } from "../constants";
+import { Redirect } from "react-router";
 
 class WorkoutDetails extends Component {
 
@@ -18,6 +19,7 @@ class WorkoutDetails extends Component {
             newExercise: false,
             existingExercise: false,
             categoryEx: undefined,
+            redirect: false,
             isLoaded: false,
             errorStatusCode: undefined,
             errorMessage: undefined
@@ -69,56 +71,65 @@ class WorkoutDetails extends Component {
     }
 
     componentDidMount() {
-        axios.get("api/workouts/" + this.state.workoutId)
-            .then(response =>
-                this.setState({
-                    workout: response.data,
-                    isLoaded: true
-                }))
-            .catch(error => {
-                if (!error.response) {
+        if (!sessionStorage.getItem('token')) {
+            this.setState({
+                redirect: true
+            })
+        } else {
+            axios.get("api/workouts/" + this.state.workoutId)
+                .then(response =>
                     this.setState({
-                        isLoaded: true,
-                        errorStatusCode: 522,
-                        errorMessage: "Connection lost!"
-                    })
-                } else {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: error.response.status,
-                        errorMessage: error.response.statusText
-                    })
-                }
-            });
+                        workout: response.data,
+                        isLoaded: true
+                    }))
+                .catch(error => {
+                    if (!error.response) {
+                        this.setState({
+                            isLoaded: true,
+                            errorStatusCode: 522,
+                            errorMessage: "Connection lost!"
+                        })
+                    } else {
+                        this.setState({
+                            isLoaded: true,
+                            errorStatusCode: error.response.status,
+                            errorMessage: error.response.statusText
+                        })
+                    }
+                });
 
-        axios.get("api/exercises?workoutId=" + this.state.workoutId)
-            .then(response =>
-                this.setState({
-                    exercises: response.data,
-                    isLoaded: true
-                }))
-            .catch(error => {
-                if (!error.response) {
+            axios.get("api/exercises?workoutId=" + this.state.workoutId)
+                .then(response =>
                     this.setState({
-                        isLoaded: true,
-                        errorStatusCode: 522,
-                        errorMessage: "Connection lost!"
-                    })
-                } else {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: error.response.status,
-                        errorMessage: error.response.statusText
-                    })
-                }
-            });
+                        exercises: response.data,
+                        isLoaded: true
+                    }))
+                .catch(error => {
+                    if (!error.response) {
+                        this.setState({
+                            isLoaded: true,
+                            errorStatusCode: 522,
+                            errorMessage: "Connection lost!"
+                        })
+                    } else {
+                        this.setState({
+                            isLoaded: true,
+                            errorStatusCode: error.response.status,
+                            errorMessage: error.response.statusText
+                        })
+                    }
+                });
+        }
     }
 
     render() {
-        let { isLoaded, errorStatusCode, newExercise, existingExercise, workoutId } = this.state;
-        let language = sessionStorage.getItem("language");
+        let { workout, exercises, isLoaded, errorStatusCode, newExercise, existingExercise, workoutId } = this.state;
+        const language = sessionStorage.getItem("language");
+        const userRole = sessionStorage.getItem("role");
 
-        if (!isLoaded) {
+        if (this.state.redirect) {
+            return (<Redirect to='sign-in' />);
+        } else if (!isLoaded) {
             return <FullPageLoader />;
         } else if (errorStatusCode) {
             return <Error errorCode={this.state.errorStatusCode} errorInfo={this.state.errorMessage} errorEnd={"Try again later!"} />;
@@ -126,18 +137,18 @@ class WorkoutDetails extends Component {
             return (
 
                 <div className="main-content workout-details">
-                    <h1>{this.state.workout.name}</h1>
+                    <h1>{workout.name}</h1>
                     <div className="card-container">
-                        {this.state.exercises && this.state.exercises.map((exercise) => (
-                            <div className="card" key={exercise.id}>
+                        {exercises && exercises.map(({ id, name, namePL, info, infoPL, exerciseCategory }) => (
+                            <div className="card" key={id}>
                                 <div className="card-info">
-                                    <h4 className="category">{this.extractCategory(exercise.exerciseCategory)}</h4>
-                                    <h4>{exercise.name}</h4>
-                                    <h5>{exercise.info}</h5>
+                                    <h4 className="category">{(language === LANGUAGE.polish && exerciseCategory.categoryPL !== "") ? exerciseCategory.categoryPL : exerciseCategory.category}</h4>
+                                    <h4>{(language === LANGUAGE.polish && namePL !== "") ? namePL : name}</h4>
+                                    <h5>{(language === LANGUAGE.polish && infoPL !== "") ? infoPL : info}</h5>
                                 </div>
                                 <div className="card-buttons">
-                                    <button onClick={this.redirectToExerciseDetails.bind(this, exercise.id)}>{language === LANGUAGE.english ? "Logs" : "Wyniki"}</button>
-                                    <button className="error-btn" onClick={this.deleteExerciseFromWorkout.bind(this, exercise.id)}>{language === LANGUAGE.english ? "Delete" : "Usuń"}</button>
+                                    <button onClick={this.redirectToExerciseDetails.bind(this, id)}>{language === LANGUAGE.english ? "Logs" : "Wyniki"}</button>
+                                    <button className="error-btn" onClick={this.deleteExerciseFromWorkout.bind(this, id)}>{language === LANGUAGE.english ? "Delete" : "Usuń"}</button>
                                 </div>
                             </div>
                         ))}
@@ -168,9 +179,9 @@ class WorkoutDetails extends Component {
                             </div>
                         </div>
                     </div>
-                    <a href="#modal">
+                    {(workout.status === STATUS.private || userRole === USER_ROLE.admin) && <a href="#modal">
                         <button className="add-btn"><i className="fas fa-plus"></i></button>
-                    </a>
+                    </a>}
                 </div>
 
             );

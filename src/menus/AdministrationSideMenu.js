@@ -17,6 +17,7 @@ class AdministrationSideMenu extends Component {
     }
 
     logout() {
+        this.props.handleSideMenu();
         logout();
     }
 
@@ -29,49 +30,49 @@ class AdministrationSideMenu extends Component {
                 <nav>
                     <ul>
                         <li>
-                            <NavLink to="/administration/home" activeClassName="active">
+                            <NavLink to="/administration/home" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-home"></i></span>
                                 <span>{language === LANGUAGE.english ? "Home" : "Strona główna"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/administration/users" activeClassName="active">
+                            <NavLink to="/administration/users" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-users"></i></span>
                                 <span>{language === LANGUAGE.english ? "Users" : "Użytkownicy"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/administration/workouts" activeClassName="active">
+                            <NavLink to="/administration/workouts" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-list-alt"></i></span>
                                 <span>{language === LANGUAGE.english ? "Workouts" : "Treningi"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/administration/exercises" activeClassName="active">
+                            <NavLink to="/administration/exercises" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-dumbbell"></i></span>
                                 <span>{language === LANGUAGE.english ? "Exercises" : "Ćwiczenia"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/administration/diet" activeClassName="active">
+                            <NavLink to="/administration/diet" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-newspaper"></i></span>
                                 <span>{language === LANGUAGE.english ? "Diet" : "Dieta"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/administration/meals" activeClassName="active">
+                            <NavLink to="/administration/meals" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-apple-alt"></i></span>
                                 <span>{language === LANGUAGE.english ? "Meals" : "Posiłki"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/administration/profile" activeClassName="active">
+                            <NavLink to="/administration/profile" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-user"></i></span>
                                 <span>{language === LANGUAGE.english ? "Profile" : "Profil"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/administration/settings" activeClassName="active">
+                            <NavLink to="/administration/settings" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-cog"></i></span>
                                 <span>{language === LANGUAGE.english ? "Settings" : "Ustawienia"}</span>
                             </NavLink>

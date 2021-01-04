@@ -17,6 +17,7 @@ class UserSideMenu extends Component {
     }
 
     logout() {
+        this.props.handleSideMenu();
         logout();
     }
 
@@ -29,43 +30,43 @@ class UserSideMenu extends Component {
                 <nav>
                     <ul>
                         <li>
-                            <NavLink to="/dashboard/home" activeClassName="active">
+                            <NavLink to="/dashboard/home" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-home"></i></span>
                                 <span>{language === LANGUAGE.english ? "Home" : "Strona główna"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/dashboard/workouts" activeClassName="active">
+                            <NavLink to="/dashboard/workouts" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-list-alt"></i></span>
                                 <span>{language === LANGUAGE.english ? "Workouts" : "Treningi"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/dashboard/exercises" activeClassName="active">
+                            <NavLink to="/dashboard/exercises" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-dumbbell"></i></span>
                                 <span>{language === LANGUAGE.english ? "Exercises" : "Ćwiczenia"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/dashboard/diet" activeClassName="active">
+                            <NavLink to="/dashboard/diet" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-newspaper"></i></span>
                                 <span>{language === LANGUAGE.english ? "Diet" : "Dieta"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/dashboard/meals" activeClassName="active">
+                            <NavLink to="/dashboard/meals" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-apple-alt"></i></span>
                                 <span>{language === LANGUAGE.english ? "Meals" : "Posiłki"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/dashboard/profile" activeClassName="active">
+                            <NavLink to="/dashboard/profile" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-user"></i></span>
                                 <span>{language === LANGUAGE.english ? "Profile" : "Profil"}</span>
                             </NavLink>
                         </li>
                         <li>
-                            <NavLink to="/dashboard/settings" activeClassName="active">
+                            <NavLink to="/dashboard/settings" activeClassName="active" onClick={this.props.handleSideMenu}>
                                 <span><i className="fas fa-cog"></i></span>
                                 <span>{language === LANGUAGE.english ? "Settings" : "Ustawienia"}</span>
                             </NavLink>

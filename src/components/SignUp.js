@@ -16,7 +16,7 @@ class SignIn extends Component {
         }
 
         this.signUp = this.signUp.bind(this);
-        this.onChange = this.onChange.bind(this);
+        this.handleOnChange = this.handleOnChange.bind(this);
     }
 
     signUp() {
@@ -50,7 +50,7 @@ class SignIn extends Component {
         }
     }
 
-    onChange(element) {
+    handleOnChange(element) {
         this.setState({
             [element.target.name]: element.target.value
         });
@@ -72,7 +72,7 @@ class SignIn extends Component {
                             </div>
                             <div>
                                 <h5>{language === LANGUAGE.english ? "Username" : "Nazwa użytkownika"}</h5>
-                                <input type="text" name="username" onChange={this.onChange} />
+                                <input type="text" name="username" onChange={this.handleOnChange} />
                             </div>
                         </div>
                         <div className={`inputs email ${email ? "focus" : ""}`}>
@@ -81,7 +81,7 @@ class SignIn extends Component {
                             </div>
                             <div>
                                 <h5>Email</h5>
-                                <input type="text" name="email" onChange={this.onChange} />
+                                <input type="text" name="email" onChange={this.handleOnChange} />
                             </div>
                         </div>
                         <div className={`inputs pass ${password ? "focus" : ""}`}>
@@ -90,7 +90,7 @@ class SignIn extends Component {
                             </div>
                             <div>
                                 <h5>{language === LANGUAGE.english ? "Password" : "Hasło"}</h5>
-                                <input type="password" name="password" onChange={this.onChange} />
+                                <input type="password" name="password" onChange={this.handleOnChange} />
                             </div>
                         </div>
                         <div className={`inputs pass ${repassword ? "focus" : ""}`}>
@@ -99,11 +99,11 @@ class SignIn extends Component {
                             </div>
                             <div>
                                 <h5>{language === LANGUAGE.english ? "Confirm Password" : "Potwierdź Hasło"}</h5>
-                                <input type="password" name="repassword" onChange={this.onChange} />
+                                <input type="password" name="repassword" onChange={this.handleOnChange} />
                             </div>
                         </div>
                         <p className="error-message ">{this.state.errorMessage}</p>
-                        <input type="button" className="btn" value={language === LANGUAGE.english ? "Sign Up" : "Zarejestruj się"} onClick={this.signUp} />
+                        <input type="button" className="btn primary-btn" value={language === LANGUAGE.english ? "Sign Up" : "Zarejestruj się"} onClick={this.signUp} />
                         <p>{language === LANGUAGE.english ? "Already have an account?" : "Już posiadasz konto?"} <a href="/sign-in">{language === LANGUAGE.english ? "Sign In!" : "Zaloguj się!"}</a></p>
                     </form>
                 </div>

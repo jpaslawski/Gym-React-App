@@ -17,12 +17,17 @@ input:-webkit-autofill:active {
 
 html, body {
     font-family: "Montserrat", sans-serif;
-    height: 100%;
     overflow: auto;
-    padding-bottom: 0;
+    display: block;
+    min-height: 100%;
+    padding: 0;
     margin: 0;
-    background: #DBF6FF;
-    background: linear-gradient(to bottom right, #2399EB, #DBF6FF);
+    
+    background: linear-gradient(to bottom right, #2399EB, #DBF6FF) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 .light-blue {
@@ -50,7 +55,7 @@ input:focus, textarea:focus, select:focus{
 }
 
 .header {
-    position: absolute;
+    position: fixed;
     height: 60px;
     width: 100%;
     padding: 15px 20px;
@@ -80,13 +85,13 @@ input:focus, textarea:focus, select:focus{
     background-color: #16017B;
     z-index: 3;
     padding-top: 60px;
-
+    /*
     -webkit-transform: translate(0, -500%);
     -ms-transform: translate(0, -500%);
     transform: translate(0, -500%);
 
     -webkit-transition: -webkit-transform 0.2s ease-out;
-    transition: transform 0.2s ease-out;
+    transition: transform 0.2s ease-out;*/
 }
 
 .header:hover .side-menu{
@@ -154,7 +159,7 @@ input:focus, textarea:focus, select:focus{
     width: 100%;
     background: #16017B;
     border-radius: 10px;
-    margin-top: 70px;
+    margin-top: 30px;
     margin-bottom: 20px;
     padding: 0;
     box-shadow: 0 9px 18px 0 rgba(0,0,0,.1);
@@ -172,13 +177,21 @@ input:focus, textarea:focus, select:focus{
 .pageLabel h3 {
     display: inline-block;
     margin: 0;
-    padding: 19px 5px 12px 10px;
+    padding: 19px 25px 12px 25px;
     border-bottom: 4px solid #16017B;
     font-size: 15px;
     font-weight: 100;
     color: #FFFFFF;
     transition: all 0.3s ease-in-out;
     cursor: pointer;
+}
+
+.pageLabel i {
+    font-size: 20px;
+}
+
+.pageLabel span {
+    display: none;
 }
 
 .pageLabel > .active {
@@ -207,7 +220,7 @@ input:focus, textarea:focus, select:focus{
     border: 2px solid #2399EB;
     position: absolute;
     right: 40px;
-    top: 140px;
+    top: 100px;
 }
 
 .no-content {
@@ -324,7 +337,7 @@ button:focus {
 }
 
 .add-btn {
-    position: absolute;
+    position: fixed;
     z-index: 1;
     bottom: 20px;
     right: 0;
@@ -343,7 +356,7 @@ button:focus {
 }
 
 .filter-btn {
-    position: absolute;
+    position: fixed;
     z-index: 1;
     top: 235px;
     right: -81px;
@@ -404,6 +417,7 @@ button:focus {
 }
 
 table {
+    width: 100%;
     background-color: white;
     table-layout: fixed;
     margin-left: auto;
@@ -673,7 +687,7 @@ input[type=number] {
     border-radius: 5px;
     outline: none;
     background: none;
-    padding: 0.5rem 0.7rem;
+    padding: 1.5rem 0.7rem;
     font-size: 1.2rem;
     font-family: "Montserrat", sans-serif;
     color: #0F0147;
@@ -701,7 +715,6 @@ input[type=button] {
     font-size: 1.2rem;
     outline: none;
     border: none;
-    background: linear-gradient(to right, #16017B, #2399EB);
     cursor: pointer;
     color: white;
     background-size: 200%;
@@ -867,6 +880,10 @@ input[type=button]:disabled {
     padding: 0;
     margin: 5px;
     height: 115px;
+}
+
+.preference .card {
+    width: 100%;
 }
 
 .card .image {
@@ -1061,7 +1078,7 @@ section h3 {
 
 .filter {
     display: none;
-    z-index: 10;
+    z-index: 9;
     background-color: white;
     border-radius: 10px;
     height: 100%;
@@ -1183,6 +1200,7 @@ select {
     font-family: "Montserrat", sans-serif;
     -webkit-appearance: none;
     background: url(http://cdn1.iconfinder.com/data/icons/cc_mono_icon_set/blacks/16x16/br_down.png) no-repeat right white;
+    background-position: 98%;
 }
 
 option {
@@ -1217,7 +1235,7 @@ option:selected {
 }
 
 .exercise {
-    padding: 10px;
+    padding: 60px 10px;
 }
 
 .submit-box {
@@ -1386,6 +1404,27 @@ canvas {
     background: #3399ff;
 }
 
+.react-datepicker {
+    bottom: 220px;
+}
+
+.react-datepicker-popper {
+    z-index: 30 !important;
+}
+
+.react-datepicker__input-container {
+    position: revert !important;
+    display: block !important;
+}
+
+.primary-btn {
+    background: linear-gradient(to right, #16017B, #2399EB);
+}
+
+.primary-btn:hover {
+    background: linear-gradient(to right, #16017B, #2399EB);
+}
+
 .error-btn {
     background: linear-gradient(to top left, #ff3300 0%, #ff6600 100%);
 }
@@ -1418,6 +1457,14 @@ canvas {
     background: linear-gradient(to bottom right, #003300 0%, #009933 100%) !important;
 }
 
+.share-btn {
+    background: linear-gradient(to top left, #FFDD00 0%, #ffbb00 100%);
+}
+
+.share-btn:hover {
+    background: linear-gradient(to bottom right, #ffbb00 0%, #ffc400 100%) !important;
+}
+
 .protein {
     color: #3399ff !important;
 }
@@ -1431,6 +1478,22 @@ canvas {
 }
 
 @media screen and (min-width: 600px) {
+
+    .pageLabel {
+        margin-top: 0px;
+    }
+
+    .pageLabel h3 {
+        padding: 27px 25px 15px 25px;
+    }
+
+    .pageLabel input {
+        padding: 10px 20px;
+        font-size: 15px;
+        border: 3px solid #2399EB;
+        right: 40px;
+        top: 31px;
+    }
 
     .header {
         display: none;
@@ -1500,45 +1563,12 @@ canvas {
         font-size: 14px;
     }
     
-    button > i.fa-pen, i.fa-info, i.fa-times {
+    button > i.fas {
         font-size: 20px;
     }
 
     td button {
         width: 30px;
-    }
-
-    .pageLabel {
-        margin-top: 0;
-    }
-    
-    .pageLabel h3 {
-        padding: 28px 10px 14px 15px;
-        border-bottom: 5px solid #16017B;
-        font-size: 17px;
-    }
-
-    .pageLabel > .active {
-        border-bottom: 5px solid #0F0147;
-    }
-    
-    .pageLabel h3:hover {
-        border-bottom: 5px solid #2399EB;
-    }
-
-    .pageLabel button {
-        position: absolute;
-        right: 25px;
-        margin-top: 20px;
-        padding: 9px 25px;
-    }
-
-    .pageLabel input {
-        padding: 10px 20px;
-        font-size: 15px;
-        border: 3px solid #2399EB;
-        right: 40px;
-        top: 31px;
     }
 
     .sign-in-container {
@@ -1679,9 +1709,46 @@ canvas {
     .language-section {
         display: block;
     }
+
+    .react-datepicker {
+        left: 100px;
+    }
 }
 
 @media screen and (min-width: 750px) {
+
+    .pageLabel {
+        margin-top: 0;
+    }
+    
+    .pageLabel h3 {
+        padding: 28px 10px 14px 15px;
+        border-bottom: 5px solid #16017B;
+        font-size: 17px;
+    }
+
+    .pageLabel > .active {
+        border-bottom: 5px solid #0F0147;
+    }
+    
+    .pageLabel h3:hover {
+        border-bottom: 5px solid #2399EB;
+    }
+
+    .pageLabel button {
+        position: absolute;
+        right: 25px;
+        margin-top: 20px;
+        padding: 9px 25px;
+    }
+
+    .pageLabel i {
+        display: none;
+    }
+
+    .pageLabel span {
+        display: block;
+    }
 
     .filter {
         display: block;
@@ -1719,6 +1786,12 @@ canvas {
     .profile-details {
         margin: 20px 10px;
         min-width: 350px;
+    }
+
+    .preference .card {
+        width: 75%;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
@@ -1973,5 +2046,9 @@ canvas {
 
     .language-section > label {
         display: contents;
+    }
+
+    .preference .card {
+        width: 50%;
     }
 }

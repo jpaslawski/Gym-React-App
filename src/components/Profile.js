@@ -5,7 +5,11 @@ import Error from "../Error";
 import ProfileImage from '../assets/profile.jpg';
 import WeightChart from "../charts/WeightChart";
 import Slider from '@material-ui/core/Slider';
+import DatePicker from "react-datepicker";
 import { LANGUAGE } from "../constants";
+import { Redirect } from "react-router";
+
+import "react-datepicker/dist/react-datepicker.css";
 
 class Profile extends Component {
 
@@ -16,37 +20,43 @@ class Profile extends Component {
             username: undefined,
             email: undefined,
             password: undefined,
-            day: undefined,
-            month: undefined,
-            year: undefined,
+            date: new Date(),
             weight: undefined,
             height: undefined,
             gender: undefined,
-            proteinSlider: undefined, 
-            carbsSlider: undefined, 
+            proteinSlider: undefined,
+            carbsSlider: undefined,
             fatSlider: undefined,
             dietGoal: undefined,
             calorieDiff: undefined,
             exerciseLevel: undefined,
             weightLogs: [],
             dietDetails: [],
+            redirect: false,
+            isLoaded: false,
             errorStatusCode: undefined,
             errorMessage: undefined
         };
 
-        this.onChange = this.onChange.bind(this);
+        this.handleOnChange = this.handleOnChange.bind(this);
+        this.handleOnChangeDate = this.handleOnChangeDate.bind(this);
         this.handleSliderChange = this.handleSliderChange.bind(this);
         this.openModalProfile = this.openModalProfile.bind(this);
-        this.handleDateFormat = this.handleDateFormat.bind(this);
 
         this.updateUser = this.updateUser.bind(this);
         this.updateUserDiet = this.updateUserDiet.bind(this);
     }
 
-    onChange(element) {
+    handleOnChange(element) {
         this.setState({
             [element.target.name]: element.target.value
         });
+    }
+
+    handleOnChangeDate(selectedDate) {
+        this.setState({
+            date: selectedDate
+        })
     }
 
     handleSliderChange = name => (e, value) => {
@@ -54,7 +64,7 @@ class Profile extends Component {
         let diff = 0;
         if (name === "proteinSlider") {
             diff = value - proteinSlider;
-            if( carbsSlider - diff >= 0 && carbsSlider - diff <= 100) carbsSlider -= diff;
+            if (carbsSlider - diff >= 0 && carbsSlider - diff <= 100) carbsSlider -= diff;
             else {
                 fatSlider -= diff - carbsSlider;
                 carbsSlider = carbsSlider - diff >= 100 ? 100 : 0;
@@ -69,8 +79,8 @@ class Profile extends Component {
 
         if (name === "carbsSlider") {
             diff = value - carbsSlider;
-            if( fatSlider - diff >= 0 && fatSlider - diff <= 100) fatSlider -= diff;
-            else { 
+            if (fatSlider - diff >= 0 && fatSlider - diff <= 100) fatSlider -= diff;
+            else {
                 proteinSlider -= diff - fatSlider;
                 fatSlider = fatSlider - diff >= 100 ? 100 : 0;
             }
@@ -84,7 +94,7 @@ class Profile extends Component {
 
         if (name === "fatSlider") {
             diff = value - fatSlider;
-            if( proteinSlider - diff >= 0 && proteinSlider  - diff <= 100) proteinSlider -= diff;
+            if (proteinSlider - diff >= 0 && proteinSlider - diff <= 100) proteinSlider -= diff;
             else {
                 carbsSlider -= diff - proteinSlider;
                 proteinSlider = proteinSlider - diff >= 100 ? 100 : 0;
@@ -98,26 +108,14 @@ class Profile extends Component {
     }
 
     openModalProfile() {
-        let dateOfBirth = new Date(this.state.user.dateOfBirth);
-
-        this.setState({
+    this.setState({
             username: this.state.user.username,
-            day: dateOfBirth.getDate(),
-            month: parseInt(dateOfBirth.getMonth() + 1, 10),
-            year: dateOfBirth.getFullYear(),
+            date: new Date(this.state.user.dateOfBirth),
             weight: this.state.user.weight,
             height: this.state.user.height,
             gender: this.state.user.gender,
             exerciseLevel: this.state.user.exerciseLevel
         });
-    }
-
-    handleDateFormat(day, month, year) {
-        day = ("0" + day).slice(-2);
-        month = ("0" + month).slice(-2);
-
-        let date = year + "-" + month + "-" + day;
-        return date;
     }
 
     updateUser() {
@@ -126,7 +124,7 @@ class Profile extends Component {
             email: this.state.user.email,
             password: this.state.user.password,
             username: this.state.username,
-            dateOfBirth: this.handleDateFormat(this.state.day, this.state.month, this.state.year),
+            dateOfBirth: this.state.date,
             height: this.state.height,
             weight: this.state.weight,
             gender: this.state.gender === "Undefined" ? "Male" : this.state.gender,
@@ -174,83 +172,89 @@ class Profile extends Component {
     }
 
     componentDidMount() {
-        axios.get("api/users/details")
-            .then(response => this.setState({
-                user: response.data
-            }))
-            .catch(error => {
-                if (!error.response) {
-                    this.setState({
-                        errorStatusCode: 522,
-                        errorMessage: "Connection lost!"
-                    })
-                } else {
-                    this.setState({
-                        errorStatusCode: error.response.status,
-                        errorMessage: error.response.statusText
-                    })
-                }
-            });
+        if (!sessionStorage.getItem('token')) {
+            this.setState({
+                redirect: true
+            })
+        } else {
+            axios.get("api/users/details")
+                .then(response => this.setState({
+                    user: response.data
+                }))
+                .catch(error => {
+                    if (!error.response) {
+                        this.setState({
+                            errorStatusCode: 522,
+                            errorMessage: "Connection lost!"
+                        })
+                    } else {
+                        this.setState({
+                            errorStatusCode: error.response.status,
+                            errorMessage: error.response.statusText
+                        })
+                    }
+                });
 
-        axios.get("api/users/weight")
-            .then(response => this.setState({
-                weightLogs: response.data
-            }))
-            .catch(error => {
-                if (!error.response) {
-                    this.setState({
-                        errorStatusCode: 522,
-                        errorMessage: "Connection lost!"
-                    })
-                } else {
-                    this.setState({
-                        errorStatusCode: error.response.status,
-                        errorMessage: error.response.statusText
-                    })
-                }
-            });
+            axios.get("api/users/weight")
+                .then(response => this.setState({
+                    weightLogs: response.data
+                }))
+                .catch(error => {
+                    if (!error.response) {
+                        this.setState({
+                            errorStatusCode: 522,
+                            errorMessage: "Connection lost!"
+                        })
+                    } else {
+                        this.setState({
+                            errorStatusCode: error.response.status,
+                            errorMessage: error.response.statusText
+                        })
+                    }
+                });
 
-        axios.get("api/users/diet")
-            .then(response => this.setState({
-                dietDetails: response.data,
-                proteinSlider: response.data.proteinPercentage,
-                carbsSlider: response.data.carbsPercentage,
-                fatSlider: response.data.fatPercentage,
-                dietGoal: Math.sign(response.data.calorieDiff),
-                calorieDiff: response.data.calorieDiff,
-                isLoaded: true
-            }))
-            .catch(error => {
-                if (!error.response) {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: 522,
-                        errorMessage: "Connection lost!"
-                    })
-                } else {
-                    this.setState({
-                        isLoaded: true,
-                        errorStatusCode: error.response.status,
-                        errorMessage: error.response.statusText
-                    })
-                }
-            });
+            axios.get("api/users/diet")
+                .then(response => this.setState({
+                    dietDetails: response.data,
+                    proteinSlider: response.data.proteinPercentage,
+                    carbsSlider: response.data.carbsPercentage,
+                    fatSlider: response.data.fatPercentage,
+                    dietGoal: Math.sign(response.data.calorieDiff),
+                    calorieDiff: response.data.calorieDiff,
+                    isLoaded: true
+                }))
+                .catch(error => {
+                    if (!error.response) {
+                        this.setState({
+                            isLoaded: true,
+                            errorStatusCode: 522,
+                            errorMessage: "Connection lost!"
+                        })
+                    } else if (error.response.status === 400) {
+                        this.setState({
+                            dietDetails: {},
+                            isLoaded: true
+                        })
+                    } else {
+                        this.setState({
+                            isLoaded: true,
+                            errorStatusCode: error.response.status,
+                            errorMessage: error.response.statusText
+                        })
+                    }
+                });
+        }
     }
 
     render() {
-        let { user, username, day, month, year, weight, height, gender, exerciseLevel, weightLogs, isLoaded, errorStatusCode, errorMessage } = this.state;
+        let { user, username, weight, height, gender, exerciseLevel, weightLogs, isLoaded, errorStatusCode, errorMessage } = this.state;
         let { dietDetails, proteinSlider, carbsSlider, fatSlider, dietGoal, calorieDiff } = this.state;
 
-        const days = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        let language = sessionStorage.getItem("language");
-        let years = [];
-        let currentYear = new Date().getFullYear();
-        for (let year = currentYear; year > currentYear - 100; year--) {
-            years.push(year);
-        }
+        const language = sessionStorage.getItem("language");
 
-        if (!isLoaded) {
+        if (this.state.redirect) {
+            return (<Redirect to='/sign-in' />);
+        } else if (!isLoaded) {
             return <FullPageLoader />;
         } else if (errorStatusCode) {
             return <Error errorCode={errorStatusCode} errorInfo={errorMessage} errorEnd={"Try again later!"} />;
@@ -266,7 +270,7 @@ class Profile extends Component {
                             <h4>{user.email}</h4>
                         </div>
                         <div className="profile-details">
-                            <div className="section-label">{language === LANGUAGE.english  ? "User Details" : "Szczegóły informacje"}</div>
+                            <div className="section-label">{language === LANGUAGE.english ? "User Details" : "Szczegółowe informacje"}</div>
                             <div className="user-info">
                                 <div className="item-label">{language === LANGUAGE.english ? "Date of Birth" : "Data urodzenia"}:</div>
                                 <div className="item-content">{user.dateOfBirth}</div>
@@ -278,7 +282,7 @@ class Profile extends Component {
                                 <div className="item-content">{user.weight} kg</div>
 
                                 <div className="item-label">{language === LANGUAGE.english ? "Gender" : "Płeć"}:</div>
-                                <div className="item-content">{user.gender}</div>
+                                <div className="item-content">{user.gender === "Undefined" ? "-" : user.gender}</div>
 
                                 <div className="item-label">{language === LANGUAGE.english ? "Exercise Level Ratio" : "Współczynnik wysiłku fizycznego"}:</div>
                                 <div className="item-content">{user.exerciseLevel}</div>
@@ -307,9 +311,9 @@ class Profile extends Component {
                             </div>
                         </div>
                     </div>
-                    <div className="chart">
-                        {weightLogs && <WeightChart logs={weightLogs} />}
-                    </div>
+                    {weightLogs && <div className="chart">
+                        <WeightChart logs={weightLogs} />
+                    </div>}
 
                     <div className="modal" id="modal-profile">
                         <div className="modal-container">
@@ -324,39 +328,15 @@ class Profile extends Component {
                                     </div>
                                     <div>
                                         <h5>{language === LANGUAGE.english ? "Username" : "Nazwa użytkownika"}</h5>
-                                        <input type="text" name="username" onChange={this.onChange} value={username || ""} />
+                                        <input type="text" name="username" onChange={this.handleOnChange} value={username || ""} />
                                     </div>
                                 </div>
-                                <div className="input-calendar">
+                                <div className="inputs email focus">
                                     <div className="i">
                                         <i className="fas fa-calendar"></i>
                                     </div>
-                                    <div className="input-group">
-                                        <div className="day">
-                                            <h5>{language === LANGUAGE.english ? "Day" : "Dzień"}</h5>
-                                            <select name="day" onChange={this.onChange} value={day}>
-                                                {days.map(day => (
-                                                    <option key={day} value={day}>{day}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="month">
-                                            <h5>{language === LANGUAGE.english ? "Month" : "Miesiąc"}</h5>
-                                            <select name="month" onChange={this.onChange} value={month}>
-                                                {months.map((m, index) => (
-                                                    <option key={m} value={index + 1}>{m}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="year">
-                                            <h5>{language === LANGUAGE.english ? "Year" : "Rok"}</h5>
-                                            <select name="year" onChange={this.onChange} value={year}>
-                                                {years.map(y => (
-                                                    <option key={y} value={y}>{y}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
+                                    <DatePicker selected={this.state.date}
+                                                onChange={this.handleOnChangeDate} />
                                 </div>
 
                                 <div className={`inputs pass ${(weight || weight === 0) ? "focus" : ""}`}>
@@ -365,7 +345,7 @@ class Profile extends Component {
                                     </div>
                                     <div>
                                         <h5>{language === LANGUAGE.english ? "Weight" : "Waga"}</h5>
-                                        <input type="number" name="weight" onChange={this.onChange} value={weight || ""} />
+                                        <input type="number" name="weight" onChange={this.handleOnChange} value={weight || ""} />
                                     </div>
                                 </div>
                                 <div className={`inputs pass ${(height || height === 0) ? "focus" : ""}`}>
@@ -374,7 +354,7 @@ class Profile extends Component {
                                     </div>
                                     <div>
                                         <h5>{language === LANGUAGE.english ? "Height" : "Wzrost"}</h5>
-                                        <input type="number" name="height" onChange={this.onChange} value={height || ""} />
+                                        <input type="number" name="height" onChange={this.handleOnChange} value={height || ""} />
                                     </div>
                                 </div>
                                 <div className={`inputs pass ${gender ? "focus" : ""}`}>
@@ -383,7 +363,7 @@ class Profile extends Component {
                                     </div>
                                     <div>
                                         <h5>{language === LANGUAGE.english ? "Gender" : "Płeć"}</h5>
-                                        <select name="gender" onChange={this.onChange} value={gender === "Undefined" ? "Male" : gender}>
+                                        <select name="gender" onChange={this.handleOnChange} value={gender === "Undefined" ? "Male" : gender}>
                                             <option>Male</option>
                                             <option>Female</option>
                                         </select>
@@ -395,7 +375,7 @@ class Profile extends Component {
                                     </div>
                                     <div>
                                         <h5>{language === LANGUAGE.english ? "Exercise Level" : "Poziom wysiłku fizycznego"}</h5>
-                                        <select name="exerciseLevel" onChange={this.onChange} value={exerciseLevel}>
+                                        <select name="exerciseLevel" onChange={this.handleOnChange} value={exerciseLevel}>
                                             <option value="1.2">{language === LANGUAGE.english ? "Little to no exercise" : "Mały wysiłek lub jego brak"}</option>
                                             <option value="1.375">{language === LANGUAGE.english ? "Light exercise (1 - 3 days per week)" : "Lekki trening (1 - 3 dni w tygodniu)"}</option>
                                             <option value="1.55">{language === LANGUAGE.english ? "Moderate exercise (3 - 5 days per week)" : "Umiarkowany trening (3 - 5 dni w tygodniu)"}</option>
@@ -405,7 +385,7 @@ class Profile extends Component {
                                     </div>
                                 </div>
                                 <p className="error-message ">{this.state.errorMessage}</p>
-                                <input type="button" className="btn" value={language === LANGUAGE.english ? "Update" : "Zaktualizuj"} disabled={!(username && weight > 0 && height > 0)} onClick={this.updateUser} />
+                                <input type="button" className="btn primary-btn" value={language === LANGUAGE.english ? "Update" : "Zaktualizuj"} disabled={!(username && weight > 0 && height > 0)} onClick={this.updateUser} />
                             </form>
                         </div>
                     </div>
@@ -417,22 +397,22 @@ class Profile extends Component {
                             <h2>{language === LANGUAGE.english ? "Change your diet parameters" : "Zmień parametry diety"}</h2>
                             <div className="slider-container">
                                 <label>{language === LANGUAGE.english ? "Protein Percentage" : "Procent Białka"}</label>
-                                    <Slider
-                                        className="protein"
-                                        value={proteinSlider}
-                                        track={false}
-                                        valueLabelDisplay="on"
-                                        onChange={this.handleSliderChange("proteinSlider")} />
+                                <Slider
+                                    className="protein"
+                                    value={proteinSlider}
+                                    track={false}
+                                    valueLabelDisplay="on"
+                                    onChange={this.handleSliderChange("proteinSlider")} />
                                 <label>{language === LANGUAGE.english ? "Carbs Percentage" : "Procent Węglowodanów"}</label>
-                                    <Slider
-                                        className="carbs"
-                                        value={carbsSlider}
-                                        track={false}
-                                        aria-labelledby="carbsSlider"
-                                        valueLabelDisplay="on"
-                                        onChange={this.handleSliderChange("carbsSlider")} />
+                                <Slider
+                                    className="carbs"
+                                    value={carbsSlider}
+                                    track={false}
+                                    aria-labelledby="carbsSlider"
+                                    valueLabelDisplay="on"
+                                    onChange={this.handleSliderChange("carbsSlider")} />
                                 <label>{language === LANGUAGE.english ? "Fat Percentage" : "Procent Tłuszczy"}</label>
-                                    <Slider
+                                <Slider
                                     className="fat"
                                     value={fatSlider}
                                     track={false}
@@ -446,25 +426,25 @@ class Profile extends Component {
                                 </div>
                                 <div>
                                     <h5>{language === LANGUAGE.english ? "Diet goal" : "Cel Diety"}</h5>
-                                    <select name="dietGoal" onChange={this.onChange} value={dietGoal}>
+                                    <select name="dietGoal" onChange={this.handleOnChange} value={dietGoal}>
                                         <option value="-1">{language === LANGUAGE.english ? "Lose Weight" : "Utrata wagi"}</option>
                                         <option value="0">{language === LANGUAGE.english ? "Keep current Weight" : "Utrzymanie aktualnej wagi"}</option>
                                         <option value="1">{language === LANGUAGE.english ? "Gain Weight" : "Przybranie wagi"}</option>
                                     </select>
                                 </div>
                             </div>
-                            {dietGoal !== 0 && 
-                            <div className={`inputs pass ${ (calorieDiff || calorieDiff === 0) ? "focus" : ""}`}>
-                                <div className="i">
-                                    <i className="fas fa-weight"></i>
-                                </div>
-                                <div>
-                                    <h5>{ dietGoal < 0 ? `${language === LANGUAGE.english ? "Calorie Deficit" : "Deficyt Kaloryczny"}` : `${language === LANGUAGE.english ? "Calorie Surplus" : "Nadwyżka Kaloryczna"}`}</h5>
-                                    <input type="number" name="calorieDiff" onChange={this.onChange} value={ Math.abs(calorieDiff) } />
-                                </div>
-                            </div>}
+                            {dietGoal !== 0 &&
+                                <div className={`inputs pass ${(calorieDiff || calorieDiff === 0) ? "focus" : ""}`}>
+                                    <div className="i">
+                                        <i className="fas fa-weight"></i>
+                                    </div>
+                                    <div>
+                                        <h5>{dietGoal < 0 ? `${language === LANGUAGE.english ? "Calorie Deficit" : "Deficyt Kaloryczny"}` : `${language === LANGUAGE.english ? "Calorie Surplus" : "Nadwyżka Kaloryczna"}`}</h5>
+                                        <input type="number" name="calorieDiff" onChange={this.handleOnChange} value={Math.abs(calorieDiff)} />
+                                    </div>
+                                </div>}
                             <p className="error-message ">{this.state.errorMessage}</p>
-                                <input type="button" className="btn" value={language === LANGUAGE.english ? "Update" : "Zaktualizuj"} onClick={this.updateUserDiet} />
+                            <input type="button" className="btn primary-btn" value={language === LANGUAGE.english ? "Update" : "Zaktualizuj"} onClick={this.updateUserDiet} />
                         </div>
                     </div>
                 </div>
