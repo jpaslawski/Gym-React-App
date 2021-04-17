@@ -155,7 +155,8 @@ class ExistingExerciseToWorkout extends Component {
                     </div>
                     <p className="error-message ">{this.state.errorMessage}</p>
                     { !(exercisesByCategory === undefined || exercisesByCategory.length === 0) && <input type="button"
-                    className={(exercisesByCategory === undefined || exercisesByCategory.length === 0) ? "none" : "btn primary-btn"} value="Add" onClick={this.addExercise} /> }
+                    className={(exercisesByCategory === undefined || exercisesByCategory.length === 0) ? "none" : "btn primary-btn"} 
+                    value={language === LANGUAGE.english ? "Add" : "Dodaj" } onClick={this.addExercise} /> }
                 </div>
             );
         }

@@ -29,12 +29,14 @@ const MealTable = ({ meals, selectedItem, setUpdateMode, selectMeal }) => {
             <thead>
                 <tr>
                     <th>{language === LANGUAGE.english ? "Name" : "Nazwa"}</th>
-                    <th>{language === LANGUAGE.english ? "Calories" : "Kalorie"}</th>
-                    <th>{language === LANGUAGE.english ? "Protein" : "Białko"}</th>
-                    <th>{language === LANGUAGE.english ? "Carbs" : "Węglowodany"}</th>
-                    <th>{language === LANGUAGE.english ? "Fat" : "Tłuszcze"}</th>
+                    <th><span className="shorten">{language === LANGUAGE.english ? "Calories" : "Kalorie"}</span></th>
+                    <th><span className="shorten">{language === LANGUAGE.english ? "Protein" : "Białko"}</span></th>
+                    <th className="carbs-col"><span className="shorten">{language === LANGUAGE.english ? "Carbs" : "Węglowodany"}</span></th>
+                    <th><span className="shorten">{language === LANGUAGE.english ? "Fat" : "Tłuszcze"}</span></th>
                     <th>{language === LANGUAGE.english ? "Portion Weight" : "Waga porcji"}</th>
-                    { (userRole === USER_ROLE.admin || (selectedItem === "user" && meals)) && <th>{language === LANGUAGE.english ? "Actions" : "Działanie"}</th>}
+                    { (userRole === USER_ROLE.admin || (selectedItem === "user" && meals)) && <th>
+                        <span className="shorten">{language === LANGUAGE.english ? "Actions" : "Działanie"}</span>
+                    </th>}
                 </tr>
             </thead>
             <tbody>

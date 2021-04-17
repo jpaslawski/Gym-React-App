@@ -121,11 +121,11 @@ class Home extends Component {
 
         let progressContainer = userDailyInfo !== null && userDailyInfo.proteinPercentage > 0 && userDailyInfo.carbsPercentage > 0 && userDailyInfo.fatPercentage > 0 ?
             <div className="progress-container">
-                <label>{language === LANGUAGE.english ? "Protein" : "Białko"}</label>
+                <label><span className="shorten">{language === LANGUAGE.english ? "Protein" : "Białko"}</span></label>
                 <ProgressBar percentage={userDailyInfo.proteinPercentage} background="0" />
-                <label>{language === LANGUAGE.english ? "Carbs" : "Węglowodany"}</label>
+                <label><span className="shorten">{language === LANGUAGE.english ? "Carbs" : "Węglowodany"}</span></label>
                 <ProgressBar percentage={userDailyInfo.carbsPercentage} background="1" />
-                <label>{language === LANGUAGE.english ? "Fat" : "Tłuszcze"}</label>
+                <label><span className="shorten">{language === LANGUAGE.english ? "Fat" : "Tłuszcze"}</span></label>
                 <ProgressBar percentage={userDailyInfo.fatPercentage} background="2" />
             </div> :
             <p className="no-content">{language === LANGUAGE.english ? "You haven' t submitted any meals today..." : "Nie dodałeś dzisiaj żadnych posiłków..."}</p>;

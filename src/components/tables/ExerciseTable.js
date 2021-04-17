@@ -30,7 +30,7 @@ const ExerciseTable = ({ exercises, history, setUpdateMode, selectExercise }) =>
                         <td key={name}>{(language === LANGUAGE.polish && namePL !== "") ? namePL : name}</td>
                         <td key={info} className="info-column">{(language === LANGUAGE.polish && infoPL !== "") ? infoPL : info}</td>
                         <td key={exerciseCategory}>{language === LANGUAGE.polish ? exerciseCategory.categoryPL : exerciseCategory.category}</td>
-                        <td key={id}>
+                        <td key={status} className="action-group">
                             <button className="details-btn" onClick={redirectToExerciseDetails.bind(this, id)}><i className="fas fa-info" title={language === LANGUAGE.english ? "Details" : "Szczegóły"}></i></button>
                             {(userRole === USER_ROLE.admin || status === STATUS.private) && <a href="#modal-edit">
                                 <button className="update-btn" onClick={setUpdateMode.bind(name, info, extractCategory(exerciseCategory), id)}>

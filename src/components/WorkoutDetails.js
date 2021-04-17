@@ -136,7 +136,7 @@ class WorkoutDetails extends Component {
         } else {
             return (
 
-                <div className="main-content workout-details">
+                <div className="main-content workout-details pl">
                     <h1>{workout.name}</h1>
                     <div className="card-container">
                         {exercises && exercises.map(({ id, name, namePL, info, infoPL, exerciseCategory }) => (

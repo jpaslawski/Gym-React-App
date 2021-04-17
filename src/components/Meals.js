@@ -289,7 +289,7 @@ class Meals extends Component {
             return <Error errorCode={errorStatusCode} errorInfo={errorMessage} errorEnd={"Try again later!"} />;
         } else {
             return (
-                <div className="main-content meal">
+                <div className={`main-content ${language === LANGUAGE.english ? "meal" : "meal pl"}`}>
                     <div className="modal" id="modal">
                         <div className="modal-container">
                             <a href="# ">

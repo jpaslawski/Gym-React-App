@@ -282,7 +282,9 @@ class Profile extends Component {
                                 <div className="item-content">{user.weight} kg</div>
 
                                 <div className="item-label">{language === LANGUAGE.english ? "Gender" : "Płeć"}:</div>
-                                <div className="item-content">{user.gender === "Undefined" ? "-" : user.gender}</div>
+                                <div className="item-content">
+                                    {user.gender === "Undefined" ? "-" : (language === LANGUAGE.english ? user.gender : ( user.gender === "Male" ? "Mężczyzna" : "Kobieta"))}
+                                </div>
 
                                 <div className="item-label">{language === LANGUAGE.english ? "Exercise Level Ratio" : "Współczynnik wysiłku fizycznego"}:</div>
                                 <div className="item-content">{user.exerciseLevel}</div>
@@ -364,8 +366,8 @@ class Profile extends Component {
                                     <div>
                                         <h5>{language === LANGUAGE.english ? "Gender" : "Płeć"}</h5>
                                         <select name="gender" onChange={this.handleOnChange} value={gender === "Undefined" ? "Male" : gender}>
-                                            <option>Male</option>
-                                            <option>Female</option>
+                                            <option value="Male">{language === LANGUAGE.english ? "Male" : "Mężczyzna"}</option>
+                                            <option value="Female">{language === LANGUAGE.english ? "Female" : "Kobieta"}</option>
                                         </select>
                                     </div>
                                 </div>

@@ -329,7 +329,7 @@ class Workouts extends Component {
             return <Error errorCode={errorStatusCode} errorInfo={errorMessage} errorEnd={"Try again later!"} />;
         } else {
             return (
-                <div className="main-content workout">
+                <div className={`main-content ${language === LANGUAGE.english ? "workout" : "workout pl"}`}>
                     <div className="modal" id="modal">
                         <div className="modal-container">
                             <a href="# ">

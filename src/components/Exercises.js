@@ -327,7 +327,7 @@ class Exercises extends Component {
             return <Error errorCode={errorStatusCode} errorInfo={errorMessage} errorEnd={"Try again later!"} />;
         } else {
             return (
-                <div className="main-content exercise">
+                <div className={`main-content ${language === LANGUAGE.english ? "exercise" : "exercise pl"}`}>
                     <div className="modal" id="filter">
                         <div className="modal-container">
                             <a href="# ">
@@ -520,7 +520,7 @@ class Exercises extends Component {
                                     {this.state.categories && this.state.categories.map(({ id, category, categoryPL }) => (
                                         <li key={id}>
                                             <label>{(language === LANGUAGE.polish && categoryPL !== "") ? categoryPL : category}
-                                                <input id={id} name={category} type="checkbox" onChange={this.onChangeCheckBox} checked={this.state.checkedCategories.includes(category)} />
+                                                <input id={id} name={category} type="checkbox" onChange={this.handleOnChangeCheckBox} checked={this.state.checkedCategories.includes(category)} />
                                                 <span className="check"></span>
                                             </label>
                                         </li>
